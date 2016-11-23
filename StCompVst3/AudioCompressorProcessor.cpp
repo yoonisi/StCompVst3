@@ -21,6 +21,17 @@ namespace Vst {
 			return result;
 		}
 
+		tresult PLUGIN_API AudioCompressorProcessor::terminate() {
+			return AudioEffect::terminate();
+		}
+
+		tresult PLUGIN_API AudioCompressorProcessor::canProcessSampleSize(int32 symbolicSampleSize) {
+			if (symbolicSampleSize == kSample32) {
+				return kResultTrue;
+			}
+			return kResultTrue;
+		}
+
 		tresult PLUGIN_API AudioCompressorProcessor::setBusArrengements
 		(
 			SpeakerArrangement* inputs,
@@ -44,12 +55,20 @@ namespace Vst {
 			return kResultFalse;
 		}
 
+		tresult PLUGIN_API AudioCompressorProcessor::setState(IBStream* state) {
+			return kResultOk;
+		}
+
+		tresult PLUGIN_API AudioCompressorProcessor::getState(IBStream* state) {
+			return kResultOk;
+		}
+
 		tresult AudioCompressorProcessor::process(ProcessData& data) 
 		{
 			Sample32* inL = data.inputs[0].channelBuffers32[0];
-			Sample32* inR = data.inputs[0].channelBuffers32[0];
+			Sample32* inR = data.inputs[0].channelBuffers32[1];
 			Sample32* outL = data.outputs[0].channelBuffers32[0];
-			Sample32* outR = data.outputs[0].channelBuffers32[0];
+			Sample32* outR = data.outputs[0].channelBuffers32[1];
 
 			auto numSamples = data.numSamples;
 			for (auto i = 0; i < numSamples; i++) {

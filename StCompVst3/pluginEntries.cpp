@@ -17,7 +17,7 @@ DEF_CLASS2(
 	kVstAudioEffectClass,
 	VSTNAME_STR,
 	Vst::kDistributable,
-	SUBCATEGORIES_STR,
+	"Fx",
 	VERSION_STR,
 	kVstVersionString,
 	Steinberg::Vst::StComp::AudioCompressorProcessor::createInstrance)
