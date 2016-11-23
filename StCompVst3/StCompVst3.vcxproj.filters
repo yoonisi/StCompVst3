@@ -13,10 +13,34 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="plugininterface">
+      <UniqueIdentifier>{ca84491e-1ebb-4de6-b0b4-143ce8fc5015}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="public.sdk">
+      <UniqueIdentifier>{e481b6ce-19bc-45e1-8a52-3bc7a05df70e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Version.cpp">
       <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="..\VST3 SDK\pluginterfaces\base\ustring.cpp">
+      <Filter>plugininterface</Filter>
+    </ClCompile>
+    <ClCompile Include="..\VST3 SDK\public.sdk\source\main\dllmain.cpp">
+      <Filter>public.sdk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\VST3 SDK\public.sdk\source\main\pluginfactoryvst3.cpp">
+      <Filter>public.sdk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\VST3 SDK\public.sdk\source\vst\vstinitiids.cpp">
+      <Filter>public.sdk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\VST3 SDK\public.sdk\source\common\pluginview.cpp">
+      <Filter>public.sdk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\VST3 SDK\public.sdk\source\vst3stdsdk.cpp">
+      <Filter>public.sdk</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -72,7 +72,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <TargetExt>.vst3</TargetExt>
-    <IncludePath>C:\Users\Owner\Documents\Visual Studio 2015\Projects\StCompVst3\VST3 SDK;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\Owner\Documents\GitHub\StCompVst3\VST3 SDK;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Users\Owner\Documents\GitHub\StCompVst3\VST3 SDK\base\win\Win32\Debug.base_vc10;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -81,7 +81,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <TargetExt>.vst3</TargetExt>
-    <IncludePath>C:\Users\Owner\Documents\Visual Studio 2015\Projects\StCompVst3\VST3 SDK;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\Owner\Documents\GitHub\StCompVst3\VST3 SDK;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Users\Owner\Documents\GitHub\StCompVst3\VST3 SDK\base\win\Win32\Release.base_vc10;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -156,6 +156,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\VST3 SDK\pluginterfaces\base\ustring.cpp" />
+    <ClCompile Include="..\VST3 SDK\public.sdk\source\common\pluginview.cpp" />
+    <ClCompile Include="..\VST3 SDK\public.sdk\source\main\dllmain.cpp" />
+    <ClCompile Include="..\VST3 SDK\public.sdk\source\main\pluginfactoryvst3.cpp" />
+    <ClCompile Include="..\VST3 SDK\public.sdk\source\vst3stdsdk.cpp" />
+    <ClCompile Include="..\VST3 SDK\public.sdk\source\vst\vstinitiids.cpp" />
     <ClCompile Include="Version.cpp" />
   </ItemGroup>
   <ItemGroup>
