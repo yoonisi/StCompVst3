@@ -162,10 +162,17 @@
     <ClCompile Include="..\VST3 SDK\public.sdk\source\main\pluginfactoryvst3.cpp" />
     <ClCompile Include="..\VST3 SDK\public.sdk\source\vst3stdsdk.cpp" />
     <ClCompile Include="..\VST3 SDK\public.sdk\source\vst\vstinitiids.cpp" />
+    <ClCompile Include="AudioCompressorProcessor.cpp" />
+    <ClCompile Include="pluginEntries.cpp" />
     <ClCompile Include="Version.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="vst3.def" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="AudioCompressorProcessor.h" />
+    <ClInclude Include="Version.h" />
+    <ClInclude Include="vst3ids.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
