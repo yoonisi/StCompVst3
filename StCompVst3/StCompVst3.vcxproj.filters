@@ -73,5 +73,8 @@
     <ClInclude Include="AudioCompressorConsts.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="AudioCompressorParameters.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

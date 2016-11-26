@@ -179,6 +179,7 @@
   <ItemGroup>
     <ClInclude Include="AudioCompressorConsts.h" />
     <ClInclude Include="AudioCompressorControllerSimple.h" />
+    <ClInclude Include="AudioCompressorParameters.h" />
     <ClInclude Include="AudioCompressorProcessor.h" />
     <ClInclude Include="Version.h" />
     <ClInclude Include="vst3ids.h" />

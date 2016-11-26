@@ -8,13 +8,17 @@ namespace Steinberg {
 			enum ParameterIds {
 				kThreshold = 0,
 				kRatio,
+				kAttack,
 				kRelease,
 				kOutput,
 				kKnee,
-				kReduction,
-				kNumParams
+				kReduction
 			};
 
+			class ConstantValues {
+			public:
+				inline static const double MaximumMakeupGain() { return 12.0; }
+			};
 		}
 	}
 }
