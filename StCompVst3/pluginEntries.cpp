@@ -3,6 +3,7 @@
 #include "Version.h"
 #include "vst3ids.h"
 #include "AudioCompressorProcessor.h"
+#include "AudioCompressorControllerSimple.h"
 
 bool InitModule() { return true; }
 bool DeinitModule() { return true; }
@@ -20,7 +21,20 @@ DEF_CLASS2(
 	"Fx",
 	VERSION_STR,
 	kVstVersionString,
-	Steinberg::Vst::StComp::AudioCompressorProcessor::createInstrance)
+	Steinberg::Vst::StComp::AudioCompressorProcessor::createInstrance
+)
+
+DEF_CLASS2(
+	INLINE_UID_FROM_FUID(AudioCompressorControllerSimpleID),
+	PClassInfo::kManyInstances,
+	kVstComponentControllerClass,
+	VSTNAME_STR " Simple Controller",
+	0,
+	"",
+	VERSION_STR,
+	kVstVersionString,
+	Steinberg::Vst::StComp::AudioCompressorControllerSimple::createInstance
+)
 
 END_FACTORY
 

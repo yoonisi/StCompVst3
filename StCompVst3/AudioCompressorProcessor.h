@@ -1,6 +1,7 @@
 #pragma once
 
 #include "public.sdk\source\vst\vstaudioeffect.h"
+#include "vst3ids.h"
 
 namespace Steinberg {
 namespace Vst {

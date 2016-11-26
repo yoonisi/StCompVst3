@@ -5,7 +5,7 @@ namespace Vst {
 	namespace StComp {
 
 		AudioCompressorProcessor::AudioCompressorProcessor() {
-
+			setControllerClass(AudioCompressorControllerSimpleID);
 		}
 
 		AudioCompressorProcessor::~AudioCompressorProcessor() {
