@@ -4,12 +4,13 @@ namespace Steinberg {
 namespace Vst {
 	namespace StComp {
 
-		AudioCompressorProcessor::AudioCompressorProcessor() {
+		AudioCompressorProcessor::AudioCompressorProcessor() : 
+			sampleRate(44.1e3), 
+			envelopeGenerator(new EnvelopeGenerator<double>) {
 			setControllerClass(AudioCompressorControllerSimpleID);
 		}
 
 		AudioCompressorProcessor::~AudioCompressorProcessor() {
-
 		}
 
 		tresult PLUGIN_API AudioCompressorProcessor::initialize(FUnknown* context) {
@@ -30,6 +31,11 @@ namespace Vst {
 				return kResultTrue;
 			}
 			return kResultTrue;
+		}
+
+		tresult PLUGIN_API AudioCompressorProcessor::setupProcessing(ProcessSetup& newSetup) {
+			sampleRate = newSetup.sampleRate;
+			return AudioEffect::setupProcessing(newSetup);
 		}
 
 		tresult PLUGIN_API AudioCompressorProcessor::setBusArrengements
@@ -71,10 +77,18 @@ namespace Vst {
 			Sample32* outR = data.outputs[0].channelBuffers32[1];
 
 			auto numSamples = data.numSamples;
-			for (auto i = 0; i < numSamples; i++) {
-				outL[i] = inL[i];
-				outR[i] = inR[i];
+
+			double cv = 1.0;
+			double minCv = 1.0;
+			for (int i = 0; i < numSamples; i++) {
+				cv = this->envelopeGenerator->processing(inL[i], inR[i], 0.5);
+				if (minCv > cv) {
+					minCv = cv;
+				}
+				outL[i] = inL[i] * cv;
+				outR[i] = inR[i] * cv;
 			}
+
 			return kResultTrue;
 
 		}

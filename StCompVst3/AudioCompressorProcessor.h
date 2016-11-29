@@ -2,6 +2,8 @@
 
 #include "public.sdk\source\vst\vstaudioeffect.h"
 #include "vst3ids.h"
+#include "EnvelopeGenerator.h"
+#include <memory>
 
 namespace Steinberg {
 namespace Vst {
@@ -23,11 +25,18 @@ namespace StComp {
 			);
 			tresult PLUGIN_API setState(IBStream* state);
 			tresult PLUGIN_API getState(IBStream* state);
-			tresult PLUGIN_API process(ProcessData& data);
+			tresult PLUGIN_API process(ProcessData& data); 
+			tresult PLUGIN_API setupProcessing(ProcessSetup& newSetup);
+
 
 			static FUnknown* createInstrance(void*) {
 				return (IAudioProcessor*)(new AudioCompressorProcessor);
 			}
+
+		private:
+			SampleRate sampleRate;
+			std::unique_ptr<EnvelopeGenerator<double> > envelopeGenerator;
+
 		};
 
 }

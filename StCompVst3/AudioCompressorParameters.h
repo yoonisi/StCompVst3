@@ -32,12 +32,7 @@ namespace StComp {
 
 		virtual void toString(ParamValue normValue, String128 label) const {
 			char text[32] = { 0 };
-			if (normValue > 1e-4) {
-				sprintf(text, "%.2f", 20. * log10f((float)normValue));
-			}
-			else {
-				strcpy(text, "-oo");
-			}
+			sprintf(text, "%.1f", static_cast<float>(-60. * (1.0 - normValue) ) );
 			Steinberg::UString(label, 128).fromAscii(text);
 		}
 	};
@@ -59,10 +54,10 @@ namespace StComp {
 			char text[32] = { 0 };
 			float ratioParam = (float)normValue;
 			if (ratioParam == 1.0f) {
-				strcpy(text, "oo");
+				strcpy(text, "oo:1");
 			}
 			else {
-				sprintf(text, "%.2f", 1.0f / (1.0f - ratioParam));
+				sprintf(text, "%.1f:1", 1.0f / (1.0f - ratioParam));
 			}
 			Steinberg::UString(label, 128).fromAscii(text);
 		}
@@ -84,7 +79,7 @@ namespace StComp {
 		virtual void toString(ParamValue normValue, String128 label) const {
 			char text[32] = { 0 };
 			float attackParam = (float)normValue;
-			sprintf(text, "%.2f", 0.1f + 99.9f * attackParam);
+			sprintf(text, "%.1f", 0.1f + 99.9f * attackParam);
 			Steinberg::UString(label, 128).fromAscii(text);
 		}
 	};
@@ -105,7 +100,7 @@ namespace StComp {
 		virtual void toString(ParamValue normValue, String128 label) const {
 			char text[32] = { 0 };
 			float releaseParam = static_cast<float>(normValue);
-			sprintf(text, "%.2f", 25.f + (500.f - 25.f)*releaseParam);
+			sprintf(text, "%.1f", 10.f + (990.f *releaseParam));
 			Steinberg::UString(label, 128).fromAscii(text);
 		}
 	};
@@ -124,7 +119,7 @@ namespace StComp {
 		}
 		virtual void toString(ParamValue normValue, String128 label) const {
 			char text[32] = { 0 };
-			sprintf(text, "%.2f", static_cast<float>(ConstantValues::MaximumMakeupGain() * normValue));
+			sprintf(text, "%.1f", 24 * normValue);
 			Steinberg::UString(label, 128).fromAscii(text);
 		}
 	};
@@ -143,7 +138,7 @@ namespace StComp {
 		}
 		virtual void toString(ParamValue normValue, String128 label) const {
 			char text[32] = { 0 };
-			sprintf(text, "%.2f", static_cast<float>(normValue));
+			sprintf(text, "%.1f", static_cast<float>(normValue));
 			Steinberg::UString(label, 128).fromAscii(text);
 			
 		}

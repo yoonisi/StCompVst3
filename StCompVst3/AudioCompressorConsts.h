@@ -15,10 +15,6 @@ namespace Steinberg {
 				kReduction
 			};
 
-			class ConstantValues {
-			public:
-				inline static const double MaximumMakeupGain() { return 12.0; }
-			};
 		}
 	}
 }
