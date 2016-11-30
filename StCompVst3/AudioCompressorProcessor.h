@@ -36,6 +36,11 @@ namespace StComp {
 		private:
 			SampleRate sampleRate;
 			std::unique_ptr<EnvelopeGenerator<double> > envelopeGenerator;
+			std::unique_ptr<ParamValue[]> parameters;
+			bool processParameterChanges(IParameterChanges* changes);
+			bool processEvenets(IEventList* events);
+			void setParameter(int index, ParamValue paramValue, int32 sampleOffset);
+			double makeUpGain;
 
 		};
 

@@ -5,6 +5,5 @@
 #define EMAIL_STR "mailto:oonisi@gmail.com"
 #define VSTNAME_STR "StComp"
 #define VERSION_STR "0"
-#define SUBCATEGORIES_STR Vst::PlugType::kFx
 
 

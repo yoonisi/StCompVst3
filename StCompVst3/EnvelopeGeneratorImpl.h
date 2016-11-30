@@ -8,9 +8,9 @@ namespace StComp {
 	template<typename T>
 	EnvelopeGenerator<T>::EnvelopeGenerator()
 		: 
-		subLpfCutoff(17.119e3),
 		tinyLevel(-0.005),
 		maxAttackFrequency(16e3),
+		ratio(0),
 		onePoleLpf(new OnePoleLpf<T>)
 	{
 		this->clearBuffer();
@@ -23,9 +23,9 @@ namespace StComp {
 	}
 
 	template<typename T>
-	T EnvelopeGenerator<T>::processing(T inL, T inR, double ratio) {
+	T EnvelopeGenerator<T>::processing(T inL, T inR) {
 		T tmp = thresholdCut(this->onePoleLpf->processing(peakHold(absOr(inL, inR))));
-		return thresholdLevel / (ratio * tmp + thresholdLevel);
+		return thresholdLevel / (this->ratio * tmp + thresholdLevel);
 	}
 
 	template<typename T>
@@ -37,18 +37,19 @@ namespace StComp {
 
 	template<typename T>
 	void EnvelopeGenerator<T>::setReleaseTime(double normalizedRelease) {
-		this->rele
-			aseTime = 0.01 + 1.0 * releaseSec;
+		this->releaseTime = 0.01 + 1.0 * normalizedRelease;
 	}
 
 	template<typename T>
 	void EnvelopeGenerator<T>::setSampleRate(SampleRate sampleRate) {
 		this->sampleRate = sampleRate;
-		this->sampleRate10 = sampleRate * 10.0;
-		this->sampleRate05 = sampleRate05 / 2.0;
-		this->setAttackTime(this->attack);
 		this->onePoleLpf->setSampleRate(sampleRate);
-		this->onePoleLpf->setCutoffFrequency(attackFrequency);
+		this->setAttackTime(this->attack);
+	}
+
+	template<typename T>
+	void EnvelopeGenerator<T>::setRatio(double ratio) {
+		this->ratio = ratio;
 	}
 
 
@@ -62,11 +63,13 @@ namespace StComp {
 	template<typename T>
 	void EnvelopeGenerator<T>::setSoftKnee(double knee) {
 		this->softKnee = (1.0 - tinyLevel)*(knee * knee) + tinyLevel;
+		this->calcThresholdParamters();
 	}
 
 	template<typename T>
 	void EnvelopeGenerator<T>::setThreshold(double threshold) {
 		this->thresholdLevel = 0.001 * pow(1000, threshold);
+		this->calcThresholdParamters();
 	}
 
 	template<typename T>
@@ -115,7 +118,7 @@ namespace StComp {
 			this->peakCount = 0;
 		}
 		else {
-			if (static_cast<T>(this->peakCount) <= this->sampleRate10) {
+			if (static_cast<T>(this->peakCount) <= static_cast<T>(this->sampleRate * 10)) {
 				this->outputBuffer = this->peekBuff *
 					pow(M_E, -(static_cast<T>(this->peakCount) / this->sampleRate) / this->releaseTime);
 				this->peakCount++;

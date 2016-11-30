@@ -15,13 +15,14 @@ namespace StComp {
 		EnvelopeGenerator();
 		virtual ~EnvelopeGenerator();
 
-		T processing(T inL, T inR, double ratio);
+		T processing(T inL, T inR);
 		void setReleaseTime(double release);
 		void setAttackTime(double attack);
 		void setThreshold(double threshold);
 		void calcThresholdParamters();
 		void setSoftKnee(double Knee);
 		void setSampleRate(SampleRate sampleRate);
+		void setRatio(double ratio);
 		void clearBuffer();
 
 	private:
@@ -34,11 +35,11 @@ namespace StComp {
 		T lpfBuff;
 		
 		uint32_t peakCount;
+		T ratio;
 		T outputBuffer;
 		T releaseTime;
 		T attackCoef;
 		T attack;
-		T attackFrequency;
 		T thresholdLevel;
 		T softKnee;
 		T thresholdA;
@@ -48,12 +49,9 @@ namespace StComp {
 		T bCoef;
 		T cCoef;
 		T sampleRate;
-		T sampleRate10;
-		T sampleRate05;
 
 		std::unique_ptr<OnePoleLpf<T> > onePoleLpf;
 
-		const double subLpfCutoff;
 		const double tinyLevel;
 		const double maxAttackFrequency;
 

@@ -12,7 +12,8 @@ namespace Steinberg {
 				kRelease,
 				kOutput,
 				kKnee,
-				kReduction
+				kReduction,
+				kNumParams
 			};
 
 		}
