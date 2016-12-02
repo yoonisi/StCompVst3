@@ -31,6 +31,16 @@ namespace StComp {
 		return kResultOk;
 	}
 
+	tresult PLUGIN_API AudioCompressorControllerSimple::setComponentState(IBStream* state) {
+		for (int i = 0; i < ParameterIds::kNumParams; i++) {
+			double parameterToLoad(0);
+			if (state->read(&parameterToLoad, sizeof(double)) == kResultOk) {
+				setParamNormalized(i, parameterToLoad);
+			}
+		}
+		return kResultOk;
+	}
+
 }
 }
 }

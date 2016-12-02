@@ -19,10 +19,9 @@ namespace StComp {
 		void setReleaseTime(double release);
 		void setAttackTime(double attack);
 		void setThreshold(double threshold);
-		void calcThresholdParamters();
 		void setSoftKnee(double Knee);
-		void setSampleRate(SampleRate sampleRate);
 		void setRatio(double ratio);
+		void setSampleRate(SampleRate sampleRate);
 		void clearBuffer();
 
 	private:
@@ -31,8 +30,8 @@ namespace StComp {
 		inline T thresholdCut(T input);
 		inline T peakHold(T input);
 		inline T calcKneeCurve(T input);
-		T peekBuff;
-		T lpfBuff;
+		inline void calcThresholdParamters();
+		T peakBuff;
 		
 		uint32_t peakCount;
 		T ratio;

@@ -11,11 +11,10 @@ namespace StComp {
 	{
 	public:
 		tresult PLUGIN_API initialize(FUnknown* context);
-
 		static FUnknown* createInstance(void*) {
 			return (IEditController*)new AudioCompressorControllerSimple();
 		}
-
+		tresult PLUGIN_API setComponentState(IBStream* state);
 	};
 
 }

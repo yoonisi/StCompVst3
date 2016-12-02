@@ -11,11 +11,16 @@ namespace StComp {
 		tinyLevel(-0.005),
 		maxAttackFrequency(16e3),
 		ratio(0),
+		attack(0),
 		onePoleLpf(new OnePoleLpf<T>)
 	{
 		this->clearBuffer();
-		this->attack = 0;
 		this->setSampleRate(44.1e3);
+		this->setAttackTime(0.1);
+		this->setReleaseTime(0.5);
+		this->setThreshold(1.0);
+		this->setSoftKnee(0);
+		
 	}
 
 	template<typename T>
@@ -30,7 +35,7 @@ namespace StComp {
 
 	template<typename T>
 	void EnvelopeGenerator<T>::clearBuffer() {
-		this->peekBuff = this->lpfBuff = this->outputBuffer = 0;
+		this->peakBuff = this->outputBuffer = 0;
 		this->peakCount = 0;
 		this->onePoleLpf->clearBuffer();
 	}
@@ -73,7 +78,7 @@ namespace StComp {
 	}
 
 	template<typename T>
-	void EnvelopeGenerator<T>::calcThresholdParamters() {
+	inline void EnvelopeGenerator<T>::calcThresholdParamters() {
 		this->thresholdB = this->thresholdLevel;
 		this->thresholdA = this->softKnee * this->thresholdLevel - tinyLevel;
 		this->xOffset = 2. * this->thresholdB - this->thresholdA;
@@ -114,12 +119,12 @@ namespace StComp {
 	template<typename T>
 	T EnvelopeGenerator<T>::peakHold(T input) {
 		if (this->outputBuffer < input) {
-			this->peekBuff = this->outputBuffer = input;
+			this->peakBuff = this->outputBuffer = input;
 			this->peakCount = 0;
 		}
 		else {
 			if (static_cast<T>(this->peakCount) <= static_cast<T>(this->sampleRate * 10)) {
-				this->outputBuffer = this->peekBuff *
+				this->outputBuffer = this->peakBuff *
 					pow(M_E, -(static_cast<T>(this->peakCount) / this->sampleRate) / this->releaseTime);
 				this->peakCount++;
 			}

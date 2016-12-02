@@ -179,6 +179,7 @@
   <ItemGroup>
     <ClInclude Include="AudioCompressorConsts.h" />
     <ClInclude Include="AudioCompressorControllerSimple.h" />
+    <ClInclude Include="AudioCompressorEditor.h" />
     <ClInclude Include="AudioCompressorParameters.h" />
     <ClInclude Include="AudioCompressorProcessor.h" />
     <ClInclude Include="DspUtils.h" />
@@ -186,6 +187,7 @@
     <ClInclude Include="EnvelopeGeneratorImpl.h" />
     <ClInclude Include="OnePoleLpf.h" />
     <ClInclude Include="OnePoleLpfImpl.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="Version.h" />
     <ClInclude Include="vst3ids.h" />
   </ItemGroup>
@@ -193,6 +195,17 @@
     <ProjectReference Include="..\VST3 SDK\base\win\base_vc10.vcxproj">
       <Project>{5755cc40-c699-491b-bd7c-5d841c26c28d}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resource.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="assets\Back.bmp" />
+    <Image Include="assets\faderbody.bmp" />
+    <Image Include="assets\faderhandle.bmp" />
+    <Image Include="assets\knob.bmp" />
+    <Image Include="assets\ledoff.bmp" />
+    <Image Include="assets\ledon.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -91,5 +91,36 @@
     <ClInclude Include="EnvelopeGeneratorImpl.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioCompressorEditor.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resource.rc">
+      <Filter>リソース ファイル</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="assets\Back.bmp">
+      <Filter>リソース ファイル</Filter>
+    </Image>
+    <Image Include="assets\faderbody.bmp">
+      <Filter>リソース ファイル</Filter>
+    </Image>
+    <Image Include="assets\faderhandle.bmp">
+      <Filter>リソース ファイル</Filter>
+    </Image>
+    <Image Include="assets\knob.bmp">
+      <Filter>リソース ファイル</Filter>
+    </Image>
+    <Image Include="assets\ledoff.bmp">
+      <Filter>リソース ファイル</Filter>
+    </Image>
+    <Image Include="assets\ledon.bmp">
+      <Filter>リソース ファイル</Filter>
+    </Image>
   </ItemGroup>
 </Project>

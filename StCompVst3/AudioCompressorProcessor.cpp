@@ -15,6 +15,9 @@ namespace Vst {
 			parameters(new ParamValue[ParameterIds::kNumParams])
 		{
 			setControllerClass(AudioCompressorControllerSimpleID);
+			for (int i = 0; i < ParameterIds::kNumParams; i++) {
+				this->setParameter(i, 0.0, 0);
+			}
 		}
 
 		AudioCompressorProcessor::~AudioCompressorProcessor() {
