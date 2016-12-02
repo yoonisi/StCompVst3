@@ -27,3 +27,18 @@
 *.exe
 *.out
 *.app
+
+/VST3 SDK/
+/.vs/
+Debug/
+Release/
+*.db
+*.vcxproj.user
+*.aps
+*.opt
+*.clw
+*.ncb
+*.mak
+*.pdb
+*.suo
+
