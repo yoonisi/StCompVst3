@@ -34,3 +34,11 @@ Debug/
 Release/
 *.db
 *.vcxproj.user
+*.aps
+*.opt
+*.clw
+*.ncb
+*.mak
+*.pdb
+*.suo
+
