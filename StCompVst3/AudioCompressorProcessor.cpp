@@ -3,10 +3,13 @@
 #include "pluginterfaces/vst/ivstparameterchanges.h"
 #include "pluginterfaces/base/ibstream.h"
 
+#include "logger.h"
 
 namespace Steinberg {
 namespace Vst {
 	namespace StComp {
+
+		using namespace LogTool;
 
 		AudioCompressorProcessor::AudioCompressorProcessor() : 
 			sampleRate(44.1e3), 
@@ -16,7 +19,21 @@ namespace Vst {
 		{
 			setControllerClass(AudioCompressorControllerSimpleID);
 			for (int i = 0; i < ParameterIds::kNumParams; i++) {
-				this->setParameter(i, 0.0, 0);
+				switch (i)
+				{
+				case ParameterIds::kThreshold:
+					setParameter(i, 1.0, 0);
+					break;
+				case ParameterIds::kAttack:
+					setParameter(i, 0.1, 0);
+					break;
+				case ParameterIds::kRelease:
+					setParameter(i, 0.5, 0);
+					break;
+				default:
+					setParameter(i, 0, 0);
+					break;
+				}
 			}
 		}
 
@@ -126,23 +143,43 @@ namespace Vst {
 		}
 
 		tresult PLUGIN_API AudioCompressorProcessor::setState(IBStream* state) {
-			for (int i = 0; i < ParameterIds::kNumParams; i++) {
-				double parameterToSave = static_cast<double>(this->parameters[i]);
-#if BYTEORDER
-				SWAP_64(&parameterToSave, sizeof(double))
-#endif
-				state->write(&parameterToSave, sizeof(double));
-			}
-			return kResultOk;
-		}
 
-		tresult PLUGIN_API AudioCompressorProcessor::getState(IBStream* state) {
+			LOG(Logger::INFO, "");
 			for (int i = 0; i < ParameterIds::kNumParams; i++) {
 				double parameterToLoad(0);
 				if (state->read(&parameterToLoad, sizeof(double)) != kResultOk) {
+					LOG(Logger::ERROR, "fail to read parameter from state");
 					return kResultFalse;
 				}
 				this->setParameter(i, static_cast<ParamValue>(parameterToLoad), 0);
+
+				if (Logger::isLogging(Logger::INFO)) {
+					std::stringstream log;
+					log << i << "," << parameterToLoad;
+					LOG(Logger::INFO, log);
+				}
+
+			}
+			return kResultOk;
+
+		}
+
+		tresult PLUGIN_API AudioCompressorProcessor::getState(IBStream* state) {
+
+
+			LOG(LogTool::Logger::INFO, "");
+			for (int i = 0; i < ParameterIds::kNumParams; i++) {
+				double parameterToSave = static_cast<double>(this->parameters[i]);
+#if BYTEORDER == kBigEndian
+				SWAP_64(parameterToSave, sizeof(double))
+#endif
+				state->write(&parameterToSave, sizeof(double));
+
+				if (Logger::isLogging(Logger::INFO)) {
+					std::stringstream log;
+					log << i << "," << parameterToSave;
+					LOG(Logger::INFO, log);
+				}
 			}
 			return kResultOk;
 		}

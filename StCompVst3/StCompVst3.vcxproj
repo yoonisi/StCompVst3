@@ -170,6 +170,7 @@
     <ClCompile Include="..\VST3 SDK\public.sdk\source\vst\vstinitiids.cpp" />
     <ClCompile Include="AudioCompressorControllerSimple.cpp" />
     <ClCompile Include="AudioCompressorProcessor.cpp" />
+    <ClCompile Include="logger.cpp" />
     <ClCompile Include="pluginEntries.cpp" />
     <ClCompile Include="Version.cpp" />
   </ItemGroup>
@@ -185,6 +186,7 @@
     <ClInclude Include="DspUtils.h" />
     <ClInclude Include="EnvelopeGenerator.h" />
     <ClInclude Include="EnvelopeGeneratorImpl.h" />
+    <ClInclude Include="logger.h" />
     <ClInclude Include="OnePoleLpf.h" />
     <ClInclude Include="OnePoleLpfImpl.h" />
     <ClInclude Include="resource.h" />

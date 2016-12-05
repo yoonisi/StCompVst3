@@ -35,6 +35,7 @@ namespace StComp {
 			sprintf(text, "%.1f", static_cast<float>(-60. * (1.0 - normValue) ) );
 			Steinberg::UString(label, 128).fromAscii(text);
 		}
+		
 	};
 	
 	class RatioParameter : public Parameter
@@ -50,6 +51,7 @@ namespace StComp {
 		info.unitId = kRootUnitId;
 		setNormalized(0.0f);
 		}
+		
 		virtual void toString(ParamValue normValue, String128 label) const {
 			char text[32] = { 0 };
 			float ratioParam = (float)normValue;
@@ -61,6 +63,7 @@ namespace StComp {
 			}
 			Steinberg::UString(label, 128).fromAscii(text);
 		}
+		
 	};
 
 	class AttackParameter : public Parameter 
@@ -76,12 +79,14 @@ namespace StComp {
 			info.unitId = kRootUnitId;
 			setNormalized(0.2);
 		}
+		
 		virtual void toString(ParamValue normValue, String128 label) const {
 			char text[32] = { 0 };
 			float attackParam = (float)normValue;
 			sprintf(text, "%.1f", 0.1f + 99.9f * attackParam);
 			Steinberg::UString(label, 128).fromAscii(text);
 		}
+		
 	};
 
 	class ReleaseParameter : public Parameter
@@ -97,12 +102,14 @@ namespace StComp {
 			info.unitId = kRootUnitId;
 			setNormalized(0.5);
 		}
+		
 		virtual void toString(ParamValue normValue, String128 label) const {
 			char text[32] = { 0 };
 			float releaseParam = static_cast<float>(normValue);
 			sprintf(text, "%.1f", 10.f + (990.f *releaseParam));
 			Steinberg::UString(label, 128).fromAscii(text);
 		}
+		
 	};
 
 	class OutputParameter : public Parameter {
@@ -117,11 +124,13 @@ namespace StComp {
 			info.unitId = kRootUnitId;
 			setNormalized(0.0);
 		}
+		
 		virtual void toString(ParamValue normValue, String128 label) const {
 			char text[32] = { 0 };
 			sprintf(text, "%.1f", 24 * normValue);
 			Steinberg::UString(label, 128).fromAscii(text);
 		}
+		
 	};
 
 	class KneeParameter : public Parameter {
@@ -136,12 +145,14 @@ namespace StComp {
 			info.unitId = kRootUnitId;
 			setNormalized(0.0);
 		}
+		
 		virtual void toString(ParamValue normValue, String128 label) const {
 			char text[32] = { 0 };
 			sprintf(text, "%.1f", static_cast<float>(normValue));
 			Steinberg::UString(label, 128).fromAscii(text);
 			
 		}
+		
 	};
 
 	class ReductionParameter : public Parameter {
@@ -156,11 +167,13 @@ namespace StComp {
 			info.unitId = kRootUnitId;
 			setNormalized(0.0);
 		}
+		
 		virtual void toString(ParamValue normValue, String128 label) const {
 			char text[32] = { 0 };
 			sprintf(text, "%.2f", static_cast<float>(normValue));
 			Steinberg::UString(label, 128).fromAscii(text);
 		}
+		
 	};
 
 }

@@ -7,14 +7,18 @@ namespace Steinberg {
 namespace Vst {
 namespace StComp {
 
-	class AudioCompressorControllerSimple : public EditController
+	class AudioCompressorControllerSimple : public EditControllerEx1
 	{
 	public:
-		tresult PLUGIN_API initialize(FUnknown* context);
 		static FUnknown* createInstance(void*) {
 			return (IEditController*)new AudioCompressorControllerSimple();
 		}
+
+		tresult PLUGIN_API initialize(FUnknown* context);
+		tresult PLUGIN_API terminate();
+
 		tresult PLUGIN_API setComponentState(IBStream* state);
+
 	};
 
 }
