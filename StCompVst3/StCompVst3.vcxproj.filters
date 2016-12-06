@@ -19,6 +19,9 @@
     <Filter Include="public.sdk">
       <UniqueIdentifier>{e481b6ce-19bc-45e1-8a52-3bc7a05df70e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="vstgui.sf">
+      <UniqueIdentifier>{f610f326-707c-4f18-8a02-8090b66abec3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Version.cpp">
@@ -53,6 +56,24 @@
     </ClCompile>
     <ClCompile Include="logger.cpp">
       <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioCompressorEditor.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="..\VST3 SDK\vstgui.sf\vstgui\cvstguitimer.cpp">
+      <Filter>vstgui.sf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\VST3 SDK\vstgui.sf\vstgui\vstcontrols.cpp">
+      <Filter>vstgui.sf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\VST3 SDK\vstgui.sf\vstgui\vstgui.cpp">
+      <Filter>vstgui.sf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\VST3 SDK\vstgui.sf\vstgui\vstguidebug.cpp">
+      <Filter>vstgui.sf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\VST3 SDK\public.sdk\source\vst\vstguieditor.cpp">
+      <Filter>public.sdk</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -102,6 +123,15 @@
     </ClInclude>
     <ClInclude Include="logger.h">
       <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="..\VST3 SDK\vstgui.sf\vstgui\vstgui.h">
+      <Filter>vstgui.sf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\VST3 SDK\vstgui.sf\vstgui\cvstguitimer.h">
+      <Filter>vstgui.sf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\VST3 SDK\vstgui.sf\vstgui\vstcontrols.h">
+      <Filter>vstgui.sf</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

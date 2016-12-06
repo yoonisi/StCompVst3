@@ -78,7 +78,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <TargetExt>.vst3</TargetExt>
-    <IncludePath>C:\Users\Owner\Documents\GitHub\StCompVst3\VST3 SDK;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\Owner\Documents\GitHub\StCompVst3\VST3 SDK\vstgui.sf;C:\Users\Owner\Documents\GitHub\StCompVst3\VST3 SDK;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -113,7 +113,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>_DEBUG;_WINDOWS;_USRDLL;STCOMPVST3_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WINDOWS=1;DEVELOPMENT=1;_CRT_SECURE_NO_DEPRECATE=1;_DEBUG;_USRDLL;STCOMPVST3_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -167,8 +167,14 @@
     <ClCompile Include="..\VST3 SDK\public.sdk\source\main\dllmain.cpp" />
     <ClCompile Include="..\VST3 SDK\public.sdk\source\main\pluginfactoryvst3.cpp" />
     <ClCompile Include="..\VST3 SDK\public.sdk\source\vst3stdsdk.cpp" />
+    <ClCompile Include="..\VST3 SDK\public.sdk\source\vst\vstguieditor.cpp" />
     <ClCompile Include="..\VST3 SDK\public.sdk\source\vst\vstinitiids.cpp" />
+    <ClCompile Include="..\VST3 SDK\vstgui.sf\vstgui\cvstguitimer.cpp" />
+    <ClCompile Include="..\VST3 SDK\vstgui.sf\vstgui\vstcontrols.cpp" />
+    <ClCompile Include="..\VST3 SDK\vstgui.sf\vstgui\vstgui.cpp" />
+    <ClCompile Include="..\VST3 SDK\vstgui.sf\vstgui\vstguidebug.cpp" />
     <ClCompile Include="AudioCompressorControllerSimple.cpp" />
+    <ClCompile Include="AudioCompressorEditor.cpp" />
     <ClCompile Include="AudioCompressorProcessor.cpp" />
     <ClCompile Include="logger.cpp" />
     <ClCompile Include="pluginEntries.cpp" />
@@ -178,6 +184,9 @@
     <None Include="vst3.def" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\VST3 SDK\vstgui.sf\vstgui\cvstguitimer.h" />
+    <ClInclude Include="..\VST3 SDK\vstgui.sf\vstgui\vstcontrols.h" />
+    <ClInclude Include="..\VST3 SDK\vstgui.sf\vstgui\vstgui.h" />
     <ClInclude Include="AudioCompressorConsts.h" />
     <ClInclude Include="AudioCompressorControllerSimple.h" />
     <ClInclude Include="AudioCompressorEditor.h" />

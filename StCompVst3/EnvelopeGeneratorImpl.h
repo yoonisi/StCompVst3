@@ -1,5 +1,5 @@
 #include "EnvelopeGenerator.h"
-
+#include "logger.h"
 
 namespace Steinberg {
 namespace Vst {
@@ -81,10 +81,15 @@ namespace StComp {
 	inline void EnvelopeGenerator<T>::calcThresholdParamters() {
 		this->thresholdB = this->thresholdLevel;
 		this->thresholdA = this->softKnee * this->thresholdLevel - tinyLevel;
-		this->xOffset = 2. * this->thresholdB - this->thresholdA;
+		this->xOffset = 2. * (this->thresholdB - this->thresholdA);
 		this->phai = 1.0 / (4.0 * (this->thresholdA - this->thresholdB));
 		this->bCoef = -2.0 * this->xOffset * this->phai;
 		this->cCoef = this->phai * this->xOffset * this->xOffset + this->thresholdB;
+		if (Logger::isLogging(Logger::INFO)) {
+			stringstream str;
+			str << "thresholdB," << this->thresholdB << ",thresholdA," << this->thresholdA << ",xOffset," << this->xOffset;
+			LOG(Logger::INFO, str);
+		}
 		return;
 	}
 

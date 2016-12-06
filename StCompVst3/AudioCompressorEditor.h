@@ -1,6 +1,6 @@
 #pragma once
 
-
+#include <string.h>
 #include "public.sdk/source/vst/vstguieditor.h"
 #include "pluginterfaces/vst/ivstplugview.h"
 #include "pluginterfaces/vst/ivstcontextmenu.h"
@@ -18,6 +18,7 @@ namespace StComp
 	{
 	public:
 		AudioCompressorEditor(void* parent);
+		virtual ~AudioCompressorEditor();
 
 		//-- VSTGUIEditor
 		bool PLUGIN_API open(void* parent);
