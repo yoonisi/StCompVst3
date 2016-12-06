@@ -1,10 +1,11 @@
 #pragma once
 
 #include <string.h>
+
 #include "public.sdk/source/vst/vstguieditor.h"
 #include "pluginterfaces/vst/ivstplugview.h"
 #include "pluginterfaces/vst/ivstcontextmenu.h"
-#include "vstgui.sf/vstgui/vstcontrols.h"
+
 
 namespace Steinberg {
 namespace Vst {
@@ -17,7 +18,7 @@ namespace StComp
 		public IContextMenuTarget 
 	{
 	public:
-		AudioCompressorEditor(void* parent);
+		AudioCompressorEditor(void* controller);
 		virtual ~AudioCompressorEditor();
 
 		//-- VSTGUIEditor
@@ -50,6 +51,16 @@ namespace StComp
 		tresult PLUGIN_API queryInterface(const char* iid, void** obj);
 
 		void update(ParamID tag, ParamValue value);
+
+
+		enum UISize {
+			kEditorWidth = 290,
+			kEditorHeight = 170
+		};
+
+		DELEGATE_REFCOUNT(VSTGUIEditor);
+		tresult PLUGIN_API queryInterface(const char* iid, void** obj);
+
 
 	protected:
 		CBitmap* background;
