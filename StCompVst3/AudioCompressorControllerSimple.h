@@ -18,7 +18,6 @@ namespace StComp {
 		tresult PLUGIN_API initialize(FUnknown* context);
 		tresult PLUGIN_API terminate();
 
-
 		// edit controller
 		tresult PLUGIN_API setComponentState(IBStream* state);
 
@@ -29,6 +28,9 @@ namespace StComp {
 		void editorRemoved(EditorView* editor);
 
 		tresult receiveText(const char* text);
+
+		DELEGATE_REFCOUNT(EditController)
+		tresult PLUGIN_API queryInterface(const char* iid, void** obj);
 
 		void addDependentView(AudioCompressorEditor* view);
 		void removeDependentView(AudioCompressorEditor* view);

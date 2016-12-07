@@ -96,6 +96,11 @@ namespace StComp {
 		return result;
 	}
 
+	tresult PLUGIN_API AudioCompressorControllerSimple::queryInterface(const char * iid, void ** obj)
+	{
+		return EditControllerEx1::queryInterface(iid, obj);
+	}
+
 	void AudioCompressorControllerSimple::addDependentView(AudioCompressorEditor* view) {
 		this->viewArray.add(view);
 	}

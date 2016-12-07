@@ -34,6 +34,19 @@ namespace StComp
 		kEditorWidth = 290,
 		kEditorHeight = 170
 	};
+
+	enum UITag {
+		kUIThreshold = 0,
+		kUIThresholdText,
+		kUIRatio,
+		kUIRatioText,
+		kUIAttack,
+		kUIRelease,
+		kUIOutput,
+		kUIKnee,
+		kUIReduction,
+	};
+
 	AudioCompressorEditor::AudioCompressorEditor(void* controller) :
 		VSTGUIEditor(controller),
 		background(0),
@@ -68,8 +81,17 @@ namespace StComp
 		return kResultTrue;
 	}
 
-	tresult PLUGIN_API AudioCompressorEditor::findParameter(int32 xPos, int32 yPos, ParamID& result) {
+	tresult PLUGIN_API AudioCompressorEditor::findParameter(int32 xPos, int32 yPos, ParamID& resultTag) {
 		CPoint where(xPos, yPos);
+		if (this->thresholdKnob->hitTest(where)) {
+			resultTag = ParameterIds::kThreshold;
+			return kResultOk;
+		}
+		if (this->ratioKnob->hitTest(where)) {
+			resultTag = ParameterIds::kRatio;
+			return kResultOk;
+		}
+
 		return kResultFalse;
 	}
 
@@ -84,29 +106,74 @@ namespace StComp
 			return false;
 		}
 
-		// create background image
-		CRect editorSize(0, 0, kEditorWidth, kEditorHeight);
-		frame = new CFrame(editorSize, parent, this);
-		frame->setBackgroundColor(kGreyCColor);
-		background = new CBitmap(IDB_BACK);
-		frame->setBackground(this->background);
-		
-		// create reduction meter
-		auto reductionOnLed = new CBitmap(IDB_LEDON);
-		auto reductionOffLed = new CBitmap(IDB_LEDOFF);
-		
-		CRect size(0, 0, kReductionSizeX, kReductionSizeX);
-		size.offset(kReductionX, kReductionY);
-		this->reductionMeter = new CVuMeter(size, reductionOnLed, reductionOffLed, 44, kHorizontal);
-		this->frame->addView(reductionMeter);
-		this->reductionMeter->setDecreaseStepValue(0.02f);
-		reductionOffLed->forget();
-		reductionOnLed->forget();
+		{
+			// create background image
+			CRect editorSize(0, 0, kEditorWidth, kEditorHeight);
+			frame = new CFrame(editorSize, parent, this);
+			frame->setBackgroundColor(kGreyCColor);
+			background = new CBitmap(IDB_BACK);
+			frame->setBackground(this->background);
+		}
 
-		// create threshold knob
+		{
+			// create reduction meter
+			auto reductionOnLed = new CBitmap(IDB_LEDON);
+			auto reductionOffLed = new CBitmap(IDB_LEDOFF);
 
+			CRect size(0, 0, kReductionSizeX, kReductionSizeX);
+			size.offset(kReductionX, kReductionY);
+			this->reductionMeter = new CVuMeter(size, reductionOnLed, reductionOffLed, 44, kHorizontal);
+			this->frame->addView(reductionMeter);
+			this->reductionMeter->setDecreaseStepValue(0.02f);
+			reductionOffLed->forget();
+			reductionOnLed->forget();
+		}
 
-		// create ratio knob
+		{
+			// create threshold knob
+
+			auto knobBitMap = new CBitmap(IDB_KNOB);
+			CRect size(0, 0, kKnobSize, kKnobSize);
+			size.offset(kKnobX, kKnobY);
+			this->thresholdKnob = new CAnimKnob(
+				size,
+				this,
+				UITag::kUIThreshold,
+				kKnobNum,
+				kKnobSize,
+				knobBitMap,
+				CPoint(0, 0)
+			);
+			this->thresholdKnob->setMin(0.f);
+			this->thresholdKnob->setMax(1.f);
+			this->frame->addView(this->thresholdKnob);
+			auto value = getController()->getParamNormalized(ParameterIds::kThreshold);
+			update(kThreshold, value);
+			knobBitMap->forget();
+		}
+
+		{
+			// create ratio knob
+			auto knobBitMap = new CBitmap(IDB_KNOB);
+			CRect size(0, 0, kKnobSize, kKnobSize);
+			size.offset(kKnobX + kKnobInc, kKnobY);
+			this->ratioKnob = new CAnimKnob(
+				size,
+				this,
+				UITag::kUIRatio,
+				kKnobNum,
+				kKnobSize,
+				knobBitMap,
+				CPoint(0, 0)
+			);
+			this->ratioKnob->setMin(0.f);
+			this->ratioKnob->setMax(1.f);
+			this->frame->addView(this->ratioKnob);
+			auto value = getController()->getParamNormalized(ParameterIds::kRatio);
+			update(kRatio, value);
+			knobBitMap->forget();
+
+		}
 
 		return true;
 	}
@@ -120,10 +187,26 @@ namespace StComp
 			background->forget();
 			background = 0;
 		}
+		this->reductionMeter = 0;
+		this->thresholdKnob = 0;
+		this->ratioKnob = 0;
 	}
 
 	void AudioCompressorEditor::valueChanged(CControl* pControl) {
-
+		auto uitag = pControl->getTag();
+		switch (uitag)
+		{
+		case UITag::kUIThreshold:
+			controller->setParamNormalized(ParameterIds::kThreshold, pControl->getValue());
+			controller->performEdit(ParameterIds::kThreshold, pControl->getValue());
+			break;
+		case UITag::kUIRatio:
+			controller->setParamNormalized(ParameterIds::kRatio, pControl->getValue());
+			controller->performEdit(ParameterIds::kRatio, pControl->getValue());
+			break;
+		default:
+			break;
+		}
 	}
 
 	tresult PLUGIN_API AudioCompressorEditor::executeMenuItem(int32 tag) {
@@ -135,11 +218,33 @@ namespace StComp
 	}
 
 	void AudioCompressorEditor::controlBeginEdit(CControl* pControl) {
-
+		auto uitag = pControl->getTag();
+		switch (uitag)
+		{
+		case UITag::kUIThreshold:
+			controller->beginEdit(ParameterIds::kThreshold);
+			break;
+		case UITag::kUIRatio:
+			controller->beginEdit(ParameterIds::kRatio);
+			break;
+		default:
+			break;
+		}
 	}
 
 	void AudioCompressorEditor::controlEndEdit(CControl* pControl) {
-
+		auto uitag = pControl->getTag();
+		switch (uitag)
+		{
+		case UITag::kUIThreshold:
+			controller->endEdit(ParameterIds::kThreshold);
+			break;
+		case ParameterIds::kRatio:
+			controller->endEdit(ParameterIds::kRatio);
+			break;
+		default:
+			break;
+		}
 	}
 
 	void AudioCompressorEditor::beginEdit(long index){}
@@ -149,6 +254,12 @@ namespace StComp
 		using namespace LogTool;
 		switch (tag)
 		{
+		case ParameterIds::kThreshold:
+			if (this->thresholdKnob) this->thresholdKnob->setValue(value);
+			break;
+		case ParameterIds::kRatio:
+			if (this->ratioKnob) this->ratioKnob->setValue(value);
+			break;
 		case ParameterIds::kReduction:
 			this->lastReductionMeterValue = value;
 			break;
