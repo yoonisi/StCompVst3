@@ -129,10 +129,10 @@ namespace StComp
 			reductionOnLed->forget();
 		}
 
+
+		auto knobBitMap = new CBitmap(IDB_KNOB);
 		{
 			// create threshold knob
-
-			auto knobBitMap = new CBitmap(IDB_KNOB);
 			CRect size(0, 0, kKnobSize, kKnobSize);
 			size.offset(kKnobX, kKnobY);
 			this->thresholdKnob = new CAnimKnob(
@@ -149,12 +149,10 @@ namespace StComp
 			this->frame->addView(this->thresholdKnob);
 			auto value = getController()->getParamNormalized(ParameterIds::kThreshold);
 			update(kThreshold, value);
-			knobBitMap->forget();
 		}
 
 		{
 			// create ratio knob
-			auto knobBitMap = new CBitmap(IDB_KNOB);
 			CRect size(0, 0, kKnobSize, kKnobSize);
 			size.offset(kKnobX + kKnobInc, kKnobY);
 			this->ratioKnob = new CAnimKnob(
@@ -171,10 +169,8 @@ namespace StComp
 			this->frame->addView(this->ratioKnob);
 			auto value = getController()->getParamNormalized(ParameterIds::kRatio);
 			update(kRatio, value);
-			knobBitMap->forget();
-
 		}
-
+		knobBitMap->forget();
 		return true;
 	}
 
