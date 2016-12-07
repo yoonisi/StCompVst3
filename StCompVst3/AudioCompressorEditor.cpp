@@ -37,7 +37,9 @@ namespace StComp
 	AudioCompressorEditor::AudioCompressorEditor(void* controller) :
 		VSTGUIEditor(controller),
 		background(0),
-		reductionMeter(0)
+		reductionMeter(0),
+		thresholdKnob(0),
+		ratioKnob(0)
 	{
 		setIdleRate(50);
 		ViewRect viewRect(0, 0, kEditorWidth, kEditorHeight);
@@ -101,6 +103,10 @@ namespace StComp
 		reductionOffLed->forget();
 		reductionOnLed->forget();
 
+		// create threshold knob
+
+
+		// create ratio knob
 
 		return true;
 	}

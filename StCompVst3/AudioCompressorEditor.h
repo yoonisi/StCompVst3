@@ -55,6 +55,8 @@ namespace StComp
 		double lastReductionMeterValue;
 
 		CVuMeter* reductionMeter;
+		CKnob* thresholdKnob;
+		CKnob* ratioKnob;
 
 	};
 }

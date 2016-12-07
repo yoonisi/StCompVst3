@@ -109,13 +109,10 @@ namespace StComp {
 	template<typename T>
 	inline T EnvelopeGenerator<T>::thresholdCut(T input) {
 		T result = 0.;
-		if (input < this->thresholdA) {
-			; // return 0
-		}
-		else if (this->thresholdA <= input && input <= this->xOffset) {
-			result = input - this->calcKneeCurve(input);
-		}
-		else if (this->xOffset < input) {
+		if (input < this->thresholdB) {
+			;
+		} else {
+			// tentative (not implemented soft knee)
 			result = input - this->thresholdB;
 		}
 		return result;
