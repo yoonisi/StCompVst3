@@ -54,7 +54,8 @@ namespace StComp {
 	}
 
 	tresult PLUGIN_API AudioCompressorControllerSimple::terminate() {
-		return EditController::terminate();
+		this->viewArray.removeAll();
+		return EditControllerEx1::terminate();
 	}
 
 
