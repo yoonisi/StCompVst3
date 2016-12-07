@@ -144,19 +144,19 @@ namespace Vst {
 
 		tresult PLUGIN_API AudioCompressorProcessor::setState(IBStream* state) {
 
-			LOG(Logger::INFO, "");
+			LOG(Logger::kINFO, "");
 			for (int i = 0; i < ParameterIds::kNumParams; i++) {
 				double parameterToLoad(0);
 				if (state->read(&parameterToLoad, sizeof(double)) != kResultOk) {
-					LOG(Logger::ERROR, "fail to read parameter from state");
+					LOG(Logger::kERROR, "fail to read parameter from state");
 					return kResultFalse;
 				}
 				this->setParameter(i, static_cast<ParamValue>(parameterToLoad), 0);
 
-				if (Logger::isLogging(Logger::INFO)) {
+				if (Logger::isLogging(Logger::kINFO)) {
 					std::stringstream log;
 					log << i << "," << parameterToLoad;
-					LOG(Logger::INFO, log);
+					LOG(Logger::kINFO, log);
 				}
 
 			}
@@ -167,7 +167,7 @@ namespace Vst {
 		tresult PLUGIN_API AudioCompressorProcessor::getState(IBStream* state) {
 
 
-			LOG(LogTool::Logger::INFO, "");
+			LOG(LogTool::Logger::kINFO, "");
 			for (int i = 0; i < ParameterIds::kNumParams; i++) {
 				double parameterToSave = static_cast<double>(this->parameters[i]);
 #if BYTEORDER == kBigEndian
@@ -175,10 +175,10 @@ namespace Vst {
 #endif
 				state->write(&parameterToSave, sizeof(double));
 
-				if (Logger::isLogging(Logger::INFO)) {
+				if (Logger::isLogging(Logger::kINFO)) {
 					std::stringstream log;
 					log << i << "," << parameterToSave;
-					LOG(Logger::INFO, log);
+					LOG(Logger::kINFO, log);
 				}
 			}
 			return kResultOk;

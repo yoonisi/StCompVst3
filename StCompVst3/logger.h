@@ -10,11 +10,11 @@ namespace LogTool
 	{
 	public:
 		enum LogLevel {
-			NONE = 0,
-			FATAL,
-			ERROR,
-			WARN,
-			INFO
+			kNONE = 0,
+			kFATAL,
+			kERROR,
+			kWARN,
+			kINFO
 		};
 
 		static void Log(LogLevel level, const char* file, const char* func, const int line, const char* message);

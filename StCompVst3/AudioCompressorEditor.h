@@ -6,7 +6,6 @@
 #include "pluginterfaces/vst/ivstplugview.h"
 #include "pluginterfaces/vst/ivstcontextmenu.h"
 
-
 namespace Steinberg {
 namespace Vst {
 namespace StComp
@@ -44,27 +43,18 @@ namespace StComp
 		tresult PLUGIN_API findParameter(int32 xPos, int32 yPos, ParamID& resultTag);
 
 		//--IContextMenuTarget
-		tresult PLUGIN_API excuteMenuItem(int32 tag);
+		tresult PLUGIN_API executeMenuItem(int32 tag);
 
 		DELEGATE_REFCOUNT(VSTGUIEditor)
-			;
 		tresult PLUGIN_API queryInterface(const char* iid, void** obj);
 
 		void update(ParamID tag, ParamValue value);
 
-
-		enum UISize {
-			kEditorWidth = 290,
-			kEditorHeight = 170
-		};
-
-		DELEGATE_REFCOUNT(VSTGUIEditor);
-		tresult PLUGIN_API queryInterface(const char* iid, void** obj);
-
-
 	protected:
 		CBitmap* background;
 		double lastReductionMeterValue;
+
+		CVuMeter* reductionMeter;
 
 	};
 }

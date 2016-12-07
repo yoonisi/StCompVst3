@@ -85,10 +85,10 @@ namespace StComp {
 		this->phai = 1.0 / (4.0 * (this->thresholdA - this->thresholdB));
 		this->bCoef = -2.0 * this->xOffset * this->phai;
 		this->cCoef = this->phai * this->xOffset * this->xOffset + this->thresholdB;
-		if (Logger::isLogging(Logger::INFO)) {
+		if (Logger::isLogging(Logger::kINFO)) {
 			stringstream str;
 			str << "thresholdB," << this->thresholdB << ",thresholdA," << this->thresholdA << ",xOffset," << this->xOffset;
-			LOG(Logger::INFO, str);
+			LOG(Logger::kINFO, str);
 		}
 		return;
 	}

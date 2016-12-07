@@ -89,7 +89,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <TargetExt>.vst3</TargetExt>
-    <IncludePath>C:\Users\Owner\Documents\GitHub\StCompVst3\VST3 SDK;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\Owner\Documents\GitHub\StCompVst3\VST3 SDK\vstgui.sf;C:\Users\Owner\Documents\GitHub\StCompVst3\VST3 SDK;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -150,7 +150,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>NDEBUG;_WINDOWS;_USRDLL;STCOMPVST3_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WINDOWS=1;DEVELOPMENT=0;_CRT_SECURE_NO_DEPRECATE=1;NDEBUG;_USRDLL;STCOMPVST3_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>

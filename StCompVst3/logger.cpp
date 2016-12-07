@@ -7,7 +7,7 @@ namespace LogTool
 
 	ofstream* Logger::logfile = 0;
 	const char * Logger::filename = "C:\\tmp\\vstlog.csv";
-	const Logger::LogLevel Logger::messaeThreshold = Logger::LogLevel::NONE;
+	const Logger::LogLevel Logger::messaeThreshold = Logger::LogLevel::kNONE;
 	const int Logger::logmode = static_cast<int>(std::ios::app);
 
 	void Logger::Log(LogLevel level, const char * file, const char* func, const int line, const char * message) {

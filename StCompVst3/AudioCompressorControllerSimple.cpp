@@ -2,6 +2,7 @@
 #include <math.h>
 #include "AudioCompressorParameters.h"
 #include "AudioCompressorControllerSimple.h"
+#include "AudioCompressorEditor.h"
 #include "logger.h"
 
 namespace Steinberg {
@@ -59,7 +60,7 @@ namespace StComp {
 
 	tresult PLUGIN_API AudioCompressorControllerSimple::setComponentState(IBStream* state) {
 
-		LOG(Logger::INFO, "");
+		LOG(Logger::kINFO, "");
 
 		for (int i = 0; i < ParameterIds::kNumParams; i++) {
 			double parameterToLoad(0);
@@ -70,6 +71,60 @@ namespace StComp {
 				setParamNormalized(i, parameterToLoad);
 
 			}
+		}
+		return kResultOk;
+	}
+
+	IPlugView* PLUGIN_API AudioCompressorControllerSimple::createView(const char * name) {
+		if (name != 0 && strcmp(name, "editor") == 0) {
+			auto view = new AudioCompressorEditor(this);
+			return view;
+		}
+		else {
+			return 0;
+		}
+	}
+
+	tresult PLUGIN_API AudioCompressorControllerSimple::setParamNormalized(ParamID tag, ParamValue value) {
+		auto result = EditControllerEx1::setParamNormalized(tag, value);
+		for (int i = 0; i < this->viewArray.total(); i++) {
+			if (viewArray.at(i)) {
+				viewArray.at(i)->update(tag, value);
+			}
+		}
+		return result;
+	}
+
+	void AudioCompressorControllerSimple::addDependentView(AudioCompressorEditor* view) {
+		this->viewArray.add(view);
+	}
+
+	void AudioCompressorControllerSimple::removeDependentView(AudioCompressorEditor* view) {
+		for (int i = 0; i < this->viewArray.total(); i++) {
+			if (this->viewArray.at(i) == view) {
+				viewArray.removeAt(i);
+				break;
+			}
+		}
+	}
+
+	void AudioCompressorControllerSimple::editorAttached(EditorView* editor) {
+		auto view = dynamic_cast<AudioCompressorEditor*>(editor);
+		if (view) {
+			this->addDependentView(view);
+		}
+	}
+
+	void AudioCompressorControllerSimple::editorRemoved(EditorView* editor) {
+		auto view = dynamic_cast<AudioCompressorEditor*>(editor);
+		if (view) {
+			this->removeDependentView(view);
+		}
+	}
+
+	tresult AudioCompressorControllerSimple::receiveText(const char * text) {
+		if (text) {
+			LOG(Logger::kINFO, text);
 		}
 		return kResultOk;
 	}
