@@ -56,7 +56,16 @@ namespace StComp
 
 		CVuMeter* reductionMeter;
 		CKnob* thresholdKnob;
+		CParamDisplay* thresholdText;
 		CKnob* ratioKnob;
+		CParamDisplay* ratioText;
+		CKnob* attackKnob;
+		CParamDisplay* attackText;
+		CKnob* releaseKnob;
+		CParamDisplay* releaseText;
+		CKnob* gainKnob;
+		CParamDisplay* gainText;
+		CHorizontalSlider* kneeFader;
 
 	};
 }

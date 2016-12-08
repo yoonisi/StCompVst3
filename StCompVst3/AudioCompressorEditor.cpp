@@ -41,10 +41,12 @@ namespace StComp
 		kUIRatio,
 		kUIRatioText,
 		kUIAttack,
+		kUIAttackText,
 		kUIRelease,
+		kUIReleaseText,
 		kUIOutput,
-		kUIKnee,
-		kUIReduction,
+		kUIOutputText,
+		kUIKnee
 	};
 
 	AudioCompressorEditor::AudioCompressorEditor(void* controller) :
@@ -52,7 +54,17 @@ namespace StComp
 		background(0),
 		reductionMeter(0),
 		thresholdKnob(0),
-		ratioKnob(0)
+		ratioKnob(0),
+		attackKnob(0),
+		releaseKnob(0),
+		gainKnob(0),
+		kneeFader(0),
+		thresholdText(0),
+		ratioText(0),
+		attackText(0),
+		releaseText(0),
+		gainText(0)
+
 	{
 		setIdleRate(50);
 		ViewRect viewRect(0, 0, kEditorWidth, kEditorHeight);
@@ -91,6 +103,22 @@ namespace StComp
 			resultTag = ParameterIds::kRatio;
 			return kResultOk;
 		}
+		if (this->attackKnob->hitTest(where)) {
+			resultTag = ParameterIds::kAttack;
+			return kResultOk;
+		}
+		if (this->releaseKnob->hitTest(where)) {
+			resultTag = ParameterIds::kRelease;
+			return kResultOk;
+		}
+		if (this->gainKnob->hitTest(where)) {
+			resultTag = ParameterIds::kOutput;
+			return kResultOk;
+		}
+		if (this->kneeFader->hitTest(where)) {
+			resultTag = ParameterIds::kKnee;
+			return kResultOk;
+		}
 
 		return kResultFalse;
 	}
@@ -99,6 +127,27 @@ namespace StComp
 		QUERY_INTERFACE(iid, obj, IParameterFinder::iid, IParameterFinder);
 		QUERY_INTERFACE(iid, obj, IContextMenuTarget::iid, IContextMenuTarget);
 		return VSTGUIEditor::queryInterface(iid, obj);
+	}
+
+	static void configParamDisplay(CParamDisplay* text, CColor& fontColor, CColor& bgColor) {
+		text->setFont(kNormalFontSmall);
+		text->setFontColor(fontColor);
+		text->setBackColor(bgColor);
+		text->setFrameColor(bgColor);
+	}
+
+	static void positonParamDisplay(CRect& size) {
+
+		size.left -= 10;
+		size.right += 10;
+		size.top = kKnobDispY;
+		size.bottom = kKnobDispBottom;
+
+	}
+
+	void DbStringConvert(float value, char* string)
+	{
+		sprintf(string, "%.1fdB", -60.0f * (1.0f - value));
 	}
 
 	bool AudioCompressorEditor::open(void* parent) {
@@ -131,6 +180,13 @@ namespace StComp
 
 
 		auto knobBitMap = new CBitmap(IDB_KNOB);
+		CColor fontColor;
+		fontColor.alpha = 0xff;
+		fontColor.red = fontColor.blue = fontColor.green = 0xff;
+		CColor bgColor;
+		bgColor.alpha = 0xff;
+		bgColor.red = bgColor.blue = bgColor.green = 51;
+		
 		{
 			// create threshold knob
 			CRect size(0, 0, kKnobSize, kKnobSize);
@@ -141,13 +197,19 @@ namespace StComp
 				UITag::kUIThreshold,
 				kKnobNum,
 				kKnobSize,
-				knobBitMap,
-				CPoint(0, 0)
+				knobBitMap
 			);
 			this->thresholdKnob->setMin(0.f);
 			this->thresholdKnob->setMax(1.f);
 			this->frame->addView(this->thresholdKnob);
 			auto value = getController()->getParamNormalized(ParameterIds::kThreshold);
+			
+			positonParamDisplay(size);
+			this->thresholdText = new CParamDisplay(size);
+			configParamDisplay(this->thresholdText, fontColor, bgColor);
+			this->thresholdText->setStringConvert(DbStringConvert);
+			this->frame->addView(this->thresholdText);
+
 			update(kThreshold, value);
 		}
 
@@ -161,8 +223,7 @@ namespace StComp
 				UITag::kUIRatio,
 				kKnobNum,
 				kKnobSize,
-				knobBitMap,
-				CPoint(0, 0)
+				knobBitMap
 			);
 			this->ratioKnob->setMin(0.f);
 			this->ratioKnob->setMax(1.f);
@@ -170,7 +231,88 @@ namespace StComp
 			auto value = getController()->getParamNormalized(ParameterIds::kRatio);
 			update(kRatio, value);
 		}
+		{
+			// create attack knob
+			CRect size(0, 0, kKnobSize, kKnobSize);
+			size.offset(kKnobX + 2 * kKnobInc, kKnobY);
+			this->attackKnob = new CAnimKnob(
+				size,
+				this,
+				UITag::kUIAttack,
+				kKnobNum,
+				kKnobSize,
+				knobBitMap
+			);
+			this->attackKnob->setMin(0.f);
+			this->attackKnob->setMax(1.f);
+			this->frame->addView(this->attackKnob);
+			auto value = getController()->getParamNormalized(ParameterIds::kAttack);
+			update(kAttack, value);
+		}
+		{
+			// create release knob
+			CRect size(0, 0, kKnobSize, kKnobSize);
+			size.offset(kKnobX + 3 * kKnobInc, kKnobY);
+			this->releaseKnob = new CAnimKnob(
+				size,
+				this,
+				UITag::kUIRelease,
+				kKnobNum,
+				kKnobSize,
+				knobBitMap
+			);
+			this->releaseKnob->setMin(0.f);
+			this->releaseKnob->setMax(1.f);
+			this->frame->addView(this->releaseKnob);
+			auto value = getController()->getParamNormalized(ParameterIds::kRelease);
+			update(kRelease, value);
+		}
+		{
+			// create gain knob
+			CRect size(0, 0, kKnobSize, kKnobSize);
+			size.offset(kKnobX + 4 * kKnobInc, kKnobY);
+			this->gainKnob = new CAnimKnob(
+				size,
+				this,
+				UITag::kUIOutput,
+				kKnobNum,
+				kKnobSize,
+				knobBitMap
+			);
+			this->gainKnob->setMin(0.f);
+			this->gainKnob->setMax(1.f);
+			this->frame->addView(this->gainKnob);
+			auto value = getController()->getParamNormalized(ParameterIds::kOutput);
+			update(kOutput, value);
+		}
 		knobBitMap->forget();
+
+		{
+			// create knee fader
+			CRect size(0, 0, kKneeSizeX, kKneeSizeY);
+			size.offset(kKneeX, kKneeY);
+			CBitmap* faderBodyBmp = new CBitmap(IDB_FADERBODY);
+			CBitmap* faderHandleBmp = new CBitmap(IDB_FADERHANDLE);
+			int minPosition = kKneeX;
+			int maxPosition = kKneeX + kKneeSizeX - faderHandleBmp->getWidth();
+			this->kneeFader = new CHorizontalSlider(
+				size,
+				this,
+				kUIKnee,
+				minPosition,
+				maxPosition,
+				faderHandleBmp,
+				faderBodyBmp
+			);
+			this->kneeFader->setMin(0.f);
+			this->kneeFader->setMax(1.f);
+			this->frame->addView(this->kneeFader);
+			auto value = getController()->getParamNormalized(ParameterIds::kKnee);
+			update(kKnee, value);
+			faderBodyBmp->forget();
+			faderHandleBmp->forget();
+		}
+
 		return true;
 	}
 
@@ -186,6 +328,9 @@ namespace StComp
 		this->reductionMeter = 0;
 		this->thresholdKnob = 0;
 		this->ratioKnob = 0;
+		this->attackKnob = 0;
+		this->releaseKnob = 0;
+		this->gainKnob = 0;
 	}
 
 	void AudioCompressorEditor::valueChanged(CControl* pControl) {
@@ -199,6 +344,22 @@ namespace StComp
 		case UITag::kUIRatio:
 			controller->setParamNormalized(ParameterIds::kRatio, pControl->getValue());
 			controller->performEdit(ParameterIds::kRatio, pControl->getValue());
+			break;
+		case UITag::kUIAttack:
+			controller->setParamNormalized(ParameterIds::kAttack, pControl->getValue());
+			controller->performEdit(ParameterIds::kAttack, pControl->getValue());
+			break;
+		case UITag::kUIRelease:
+			controller->setParamNormalized(ParameterIds::kRelease, pControl->getValue());
+			controller->performEdit(ParameterIds::kRelease, pControl->getValue());
+			break;
+		case UITag::kUIOutput:
+			controller->setParamNormalized(ParameterIds::kOutput, pControl->getValue());
+			controller->performEdit(ParameterIds::kOutput, pControl->getValue());
+			break;
+		case UITag::kUIKnee:
+			controller->setParamNormalized(ParameterIds::kKnee, pControl->getValue());
+			controller->performEdit(ParameterIds::kKnee, pControl->getValue());
 			break;
 		default:
 			break;
@@ -217,12 +378,26 @@ namespace StComp
 		auto uitag = pControl->getTag();
 		switch (uitag)
 		{
+
 		case UITag::kUIThreshold:
 			controller->beginEdit(ParameterIds::kThreshold);
 			break;
 		case UITag::kUIRatio:
 			controller->beginEdit(ParameterIds::kRatio);
 			break;
+		case UITag::kUIAttack:
+			controller->beginEdit(ParameterIds::kAttack);
+			break;
+		case UITag::kUIRelease:
+			controller->beginEdit(ParameterIds::kRelease);
+			break;
+		case UITag::kUIOutput:
+			controller->beginEdit(ParameterIds::kOutput);
+			break;
+		case UITag::kUIKnee:
+			controller->beginEdit(ParameterIds::kKnee);
+			break;
+			
 		default:
 			break;
 		}
@@ -232,12 +407,26 @@ namespace StComp
 		auto uitag = pControl->getTag();
 		switch (uitag)
 		{
+
 		case UITag::kUIThreshold:
 			controller->endEdit(ParameterIds::kThreshold);
 			break;
 		case ParameterIds::kRatio:
 			controller->endEdit(ParameterIds::kRatio);
 			break;
+		case ParameterIds::kAttack:
+			controller->endEdit(ParameterIds::kAttack);
+			break;
+		case ParameterIds::kRelease:
+			controller->endEdit(ParameterIds::kRelease);
+			break;
+		case ParameterIds::kOutput:
+			controller->endEdit(ParameterIds::kOutput);
+			break;
+		case ParameterIds::kKnee:
+			controller->endEdit(ParameterIds::kKnee);
+			break;
+
 		default:
 			break;
 		}
@@ -250,12 +439,27 @@ namespace StComp
 		using namespace LogTool;
 		switch (tag)
 		{
+
 		case ParameterIds::kThreshold:
 			if (this->thresholdKnob) this->thresholdKnob->setValue(value);
+			if (this->thresholdText) this->thresholdText->setValue(value);
 			break;
 		case ParameterIds::kRatio:
 			if (this->ratioKnob) this->ratioKnob->setValue(value);
 			break;
+		case ParameterIds::kAttack:
+			if (this->attackKnob) this->attackKnob->setValue(value);
+			break;
+		case ParameterIds::kRelease:
+			if (this->releaseKnob) this->releaseKnob->setValue(value);
+			break;
+		case ParameterIds::kOutput:
+			if (this->gainKnob) this->gainKnob->setValue(value);
+			break;
+		case ParameterIds::kKnee:
+			if (this->kneeFader) this->kneeFader->setValue(value);
+			break;
+
 		case ParameterIds::kReduction:
 			this->lastReductionMeterValue = value;
 			break;
