@@ -1,6 +1,7 @@
 #include "AudioCompressorEditor.h"
-#include "resource.h"
 #include "AudioCompressorConsts.h"
+#include "AudioCompressorParameters.h"
+#include "resource.h"
 #include "logger.h"
 
 namespace Steinberg {
@@ -57,13 +58,13 @@ namespace StComp
 		ratioKnob(0),
 		attackKnob(0),
 		releaseKnob(0),
-		gainKnob(0),
+		outputKnob(0),
 		kneeFader(0),
 		thresholdText(0),
 		ratioText(0),
 		attackText(0),
 		releaseText(0),
-		gainText(0)
+		outputText(0)
 
 	{
 		setIdleRate(50);
@@ -111,7 +112,7 @@ namespace StComp
 			resultTag = ParameterIds::kRelease;
 			return kResultOk;
 		}
-		if (this->gainKnob->hitTest(where)) {
+		if (this->outputKnob->hitTest(where)) {
 			resultTag = ParameterIds::kOutput;
 			return kResultOk;
 		}
@@ -207,7 +208,7 @@ namespace StComp
 			positonParamDisplay(size);
 			this->thresholdText = new CParamDisplay(size);
 			configParamDisplay(this->thresholdText, fontColor, bgColor);
-			this->thresholdText->setStringConvert(DbStringConvert);
+			this->thresholdText->setStringConvert(ThresholdParameter::stringConvert);
 			this->frame->addView(this->thresholdText);
 
 			update(kThreshold, value);
@@ -229,6 +230,13 @@ namespace StComp
 			this->ratioKnob->setMax(1.f);
 			this->frame->addView(this->ratioKnob);
 			auto value = getController()->getParamNormalized(ParameterIds::kRatio);
+
+			positonParamDisplay(size);
+			this->ratioText = new CParamDisplay(size);
+			configParamDisplay(this->ratioText, fontColor, bgColor);
+			this->ratioText->setStringConvert(RatioParameter::stringConvert);
+			this->frame->addView(this->ratioText);
+
 			update(kRatio, value);
 		}
 		{
@@ -247,6 +255,13 @@ namespace StComp
 			this->attackKnob->setMax(1.f);
 			this->frame->addView(this->attackKnob);
 			auto value = getController()->getParamNormalized(ParameterIds::kAttack);
+
+			positonParamDisplay(size);
+			this->attackText = new CParamDisplay(size);
+			configParamDisplay(this->attackText, fontColor, bgColor);
+			this->attackText->setStringConvert(AttackParameter::stringConvert);
+			this->frame->addView(this->attackText);
+
 			update(kAttack, value);
 		}
 		{
@@ -265,13 +280,20 @@ namespace StComp
 			this->releaseKnob->setMax(1.f);
 			this->frame->addView(this->releaseKnob);
 			auto value = getController()->getParamNormalized(ParameterIds::kRelease);
+
+			positonParamDisplay(size);
+			this->releaseText = new CParamDisplay(size);
+			configParamDisplay(this->releaseText, fontColor, bgColor);
+			this->releaseText->setStringConvert(ReleaseParameter::stringConvert);
+			this->frame->addView(this->releaseText);
+
 			update(kRelease, value);
 		}
 		{
 			// create gain knob
 			CRect size(0, 0, kKnobSize, kKnobSize);
 			size.offset(kKnobX + 4 * kKnobInc, kKnobY);
-			this->gainKnob = new CAnimKnob(
+			this->outputKnob = new CAnimKnob(
 				size,
 				this,
 				UITag::kUIOutput,
@@ -279,10 +301,17 @@ namespace StComp
 				kKnobSize,
 				knobBitMap
 			);
-			this->gainKnob->setMin(0.f);
-			this->gainKnob->setMax(1.f);
-			this->frame->addView(this->gainKnob);
+			this->outputKnob->setMin(0.f);
+			this->outputKnob->setMax(1.f);
+			this->frame->addView(this->outputKnob);
 			auto value = getController()->getParamNormalized(ParameterIds::kOutput);
+
+			positonParamDisplay(size);
+			this->outputText = new CParamDisplay(size);
+			configParamDisplay(this->outputText, fontColor, bgColor);
+			this->outputText->setStringConvert(OutputParameter::stringConvert);
+			this->frame->addView(this->outputText);
+
 			update(kOutput, value);
 		}
 		knobBitMap->forget();
@@ -330,7 +359,7 @@ namespace StComp
 		this->ratioKnob = 0;
 		this->attackKnob = 0;
 		this->releaseKnob = 0;
-		this->gainKnob = 0;
+		this->outputKnob = 0;
 	}
 
 	void AudioCompressorEditor::valueChanged(CControl* pControl) {
@@ -446,15 +475,19 @@ namespace StComp
 			break;
 		case ParameterIds::kRatio:
 			if (this->ratioKnob) this->ratioKnob->setValue(value);
+			if (this->ratioText) this->ratioText->setValue(value);
 			break;
 		case ParameterIds::kAttack:
 			if (this->attackKnob) this->attackKnob->setValue(value);
+			if (this->attackText) this->attackText->setValue(value);
 			break;
 		case ParameterIds::kRelease:
 			if (this->releaseKnob) this->releaseKnob->setValue(value);
+			if (this->releaseText) this->releaseText->setValue(value);
 			break;
 		case ParameterIds::kOutput:
-			if (this->gainKnob) this->gainKnob->setValue(value);
+			if (this->outputKnob) this->outputKnob->setValue(value);
+			if (this->outputText) this->outputText->setValue(value);
 			break;
 		case ParameterIds::kKnee:
 			if (this->kneeFader) this->kneeFader->setValue(value);

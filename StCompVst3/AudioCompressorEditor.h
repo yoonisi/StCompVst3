@@ -63,8 +63,8 @@ namespace StComp
 		CParamDisplay* attackText;
 		CKnob* releaseKnob;
 		CParamDisplay* releaseText;
-		CKnob* gainKnob;
-		CParamDisplay* gainText;
+		CKnob* outputKnob;
+		CParamDisplay* outputText;
 		CHorizontalSlider* kneeFader;
 
 	};

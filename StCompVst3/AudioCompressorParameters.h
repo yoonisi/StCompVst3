@@ -21,7 +21,7 @@ namespace StComp {
 	public:
 		ThresholdParameter(int32 flags, int32 id) {
 			Steinberg::UString(info.title, USTRINGSIZE(info.title)).assign(USTRING("Threshold"));
-			Steinberg::UString(info.units, USTRINGSIZE(info.units)).assign(USTRING("dB"));
+			Steinberg::UString(info.units, USTRINGSIZE(info.units)).assign(USTRING(""));
 			info.flags = flags;
 			info.id = id;
 			info.stepCount = 0;
@@ -32,18 +32,21 @@ namespace StComp {
 
 		virtual void toString(ParamValue normValue, String128 label) const {
 			char text[32] = { 0 };
-			sprintf(text, "%.1f", static_cast<float>(-60. * (1.0 - normValue) ) );
+			stringConvert(normValue, text);
 			Steinberg::UString(label, 128).fromAscii(text);
 		}
+		static void stringConvert(float value, char* string) {
+			sprintf(string, "%.1f dB", static_cast<float>(-60. * (1.0 - value)));
+		}
 		
-	};
+	}; 
 	
 	class RatioParameter : public Parameter
 	{
 	public:
 		RatioParameter(int32 flags, int32 id) {
 		Steinberg::UString(info.title, USTRINGSIZE(info.title)).assign(USTRING("Ratio"));
-		Steinberg::UString(info.units, USTRINGSIZE(info.units)).assign(USTRING("n:1"));
+		Steinberg::UString(info.units, USTRINGSIZE(info.units)).assign(USTRING(""));
 		info.flags = flags;
 		info.id = id;
 		info.stepCount = 0;
@@ -54,14 +57,22 @@ namespace StComp {
 		
 		virtual void toString(ParamValue normValue, String128 label) const {
 			char text[32] = { 0 };
-			float ratioParam = (float)normValue;
-			if (ratioParam == 1.0f) {
-				strcpy(text, "oo:1");
+			stringConvert(normValue, text);
+			Steinberg::UString(label, 128).fromAscii(text);
+		}
+		static void stringConvert(float value, char* string) {
+			if (value == 1.0f){
+				strcpy(string, "oo:1");
 			}
 			else {
-				sprintf(text, "%.1f:1", 1.0f / (1.0f - ratioParam));
+				float ratio = 1.0f / (1.0f - value);
+				if (ratio < 100) {
+					sprintf(string, "%.1f:1", ratio);
+				}
+				else {
+					strcpy(string, "oo:1");
+				}
 			}
-			Steinberg::UString(label, 128).fromAscii(text);
 		}
 		
 	};
@@ -71,7 +82,7 @@ namespace StComp {
 	public:
 		AttackParameter(int32 flags, int32 id) {
 			Steinberg::UString(info.title, USTRINGSIZE(info.title)).assign(USTRING("Attack"));
-			Steinberg::UString(info.units, USTRINGSIZE(info.units)).assign(USTRING("msec"));
+			Steinberg::UString(info.units, USTRINGSIZE(info.units)).assign(USTRING(""));
 			info.flags = flags;
 			info.id = id;
 			info.stepCount = 0;
@@ -82,9 +93,12 @@ namespace StComp {
 		
 		virtual void toString(ParamValue normValue, String128 label) const {
 			char text[32] = { 0 };
-			float attackParam = (float)normValue;
-			sprintf(text, "%.1f", 0.1f + 99.9f * attackParam);
+			stringConvert(normValue, text);
 			Steinberg::UString(label, 128).fromAscii(text);
+		}
+
+		static void stringConvert(float value, char* string) {
+			sprintf(string, "%.1f ms", 0.1f + 99.9f * value);
 		}
 		
 	};
@@ -94,7 +108,7 @@ namespace StComp {
 	public:
 		ReleaseParameter(int32 flags, int32 id) {
 			Steinberg::UString(info.title, USTRINGSIZE(info.title)).assign(USTRING("Release"));
-			Steinberg::UString(info.units, USTRINGSIZE(info.units)).assign(USTRING("msec"));
+			Steinberg::UString(info.units, USTRINGSIZE(info.units)).assign(USTRING(""));
 			info.flags = flags;
 			info.id = id;
 			info.stepCount = 0;
@@ -105,9 +119,12 @@ namespace StComp {
 		
 		virtual void toString(ParamValue normValue, String128 label) const {
 			char text[32] = { 0 };
-			float releaseParam = static_cast<float>(normValue);
-			sprintf(text, "%.1f", 10.f + (990.f *releaseParam));
+			stringConvert(normValue, text);
 			Steinberg::UString(label, 128).fromAscii(text);
+		}
+
+		static void stringConvert(float value, char* string) {
+			sprintf(string, "%.1f ms", 10.f + (990.f * value));
 		}
 		
 	};
@@ -116,7 +133,7 @@ namespace StComp {
 	public:
 		OutputParameter(int32 flags, int32 id) {
 			Steinberg::UString(info.title, USTRINGSIZE(info.title)).assign(USTRING("Output"));
-			Steinberg::UString(info.units, USTRINGSIZE(info.units)).assign(USTRING("dB"));
+			Steinberg::UString(info.units, USTRINGSIZE(info.units)).assign(USTRING(""));
 			info.flags = flags;
 			info.id = id;
 			info.stepCount = 0;
@@ -127,8 +144,12 @@ namespace StComp {
 		
 		virtual void toString(ParamValue normValue, String128 label) const {
 			char text[32] = { 0 };
-			sprintf(text, "%.1f", 24 * normValue);
+			stringConvert(normValue, text);
 			Steinberg::UString(label, 128).fromAscii(text);
+		}
+
+		static void stringConvert(float value, char* string) {
+			sprintf(string, "%.1f dB", 24.f * value);
 		}
 		
 	};
