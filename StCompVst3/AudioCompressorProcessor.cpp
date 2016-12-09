@@ -3,10 +3,13 @@
 #include "pluginterfaces/vst/ivstparameterchanges.h"
 #include "pluginterfaces/base/ibstream.h"
 
+#include "logger.h"
 
 namespace Steinberg {
 namespace Vst {
 	namespace StComp {
+
+		using namespace LogTool;
 
 		AudioCompressorProcessor::AudioCompressorProcessor() : 
 			sampleRate(44.1e3), 
@@ -16,7 +19,24 @@ namespace Vst {
 		{
 			setControllerClass(AudioCompressorControllerSimpleID);
 			for (int i = 0; i < ParameterIds::kNumParams; i++) {
-				this->setParameter(i, 0.0, 0);
+				switch (i)
+				{
+				case ParameterIds::kThreshold:
+					setParameter(i, 1.0, 0);
+					break;
+				case ParameterIds::kAttack:
+					setParameter(i, 0.1, 0);
+					break;
+				case ParameterIds::kRelease:
+					setParameter(i, 0.3, 0);
+					break;
+				case ParameterIds::kKnee:
+					setParameter(i, 1.0, 0);
+					break;
+				default:
+					setParameter(i, 0, 0);
+					break;
+				}
 			}
 		}
 
@@ -38,6 +58,9 @@ namespace Vst {
 
 		tresult PLUGIN_API AudioCompressorProcessor::canProcessSampleSize(int32 symbolicSampleSize) {
 			if (symbolicSampleSize == kSample32) {
+				return kResultTrue;
+			}
+			if (symbolicSampleSize == kSample64) {
 				return kResultTrue;
 			}
 			return kResultTrue;
@@ -126,50 +149,92 @@ namespace Vst {
 		}
 
 		tresult PLUGIN_API AudioCompressorProcessor::setState(IBStream* state) {
+
+			LOG(Logger::kINFO, "");
+			for (int i = 0; i < ParameterIds::kNumParams; i++) {
+				double parameterToLoad(0);
+				if (state->read(&parameterToLoad, sizeof(double)) != kResultOk) {
+					LOG(Logger::kERROR, "fail to read parameter from state");
+					return kResultFalse;
+				}
+				this->setParameter(i, static_cast<ParamValue>(parameterToLoad), 0);
+
+				if (Logger::isLogging(Logger::kINFO)) {
+					std::stringstream log;
+					log << i << "," << parameterToLoad;
+					LOG(Logger::kINFO, log);
+				}
+
+			}
+			return kResultOk;
+
+		}
+
+		tresult PLUGIN_API AudioCompressorProcessor::getState(IBStream* state) {
+
+
+			LOG(LogTool::Logger::kINFO, "");
 			for (int i = 0; i < ParameterIds::kNumParams; i++) {
 				double parameterToSave = static_cast<double>(this->parameters[i]);
-#if BYTEORDER
-				SWAP_64(&parameterToSave, sizeof(double))
+#if BYTEORDER == kBigEndian
+				SWAP_64(parameterToSave, sizeof(double))
 #endif
 				state->write(&parameterToSave, sizeof(double));
+
+				if (Logger::isLogging(Logger::kINFO)) {
+					std::stringstream log;
+					log << i << "," << parameterToSave;
+					LOG(Logger::kINFO, log);
+				}
 			}
 			return kResultOk;
 		}
 
-		tresult PLUGIN_API AudioCompressorProcessor::getState(IBStream* state) {
-			for (int i = 0; i < ParameterIds::kNumParams; i++) {
-				double parameterToLoad(0);
-				if (state->read(&parameterToLoad, sizeof(double)) != kResultOk) {
-					return kResultFalse;
-				}
-				this->setParameter(i, static_cast<ParamValue>(parameterToLoad), 0);
-			}
-			return kResultOk;
-		}
+		
 
 		tresult AudioCompressorProcessor::process(ProcessData& data) 
 		{
 			this->processParameterChanges(data.inputParameterChanges);
 			this->processEvenets(data.inputEvents);
-
-			Sample32* inL = data.inputs[0].channelBuffers32[0];
-			Sample32* inR = data.inputs[0].channelBuffers32[1];
-			Sample32* outL = data.outputs[0].channelBuffers32[0];
-			Sample32* outR = data.outputs[0].channelBuffers32[1];
-
 			auto numSamples = data.numSamples;
 
+			if (data.symbolicSampleSize == kSample32) {
+				Sample32* inL = data.inputs[0].channelBuffers32[0];
+				Sample32* inR = data.inputs[0].channelBuffers32[1];
+				Sample32* outL = data.outputs[0].channelBuffers32[0];
+				Sample32* outR = data.outputs[0].channelBuffers32[1];
+				this->audioProcessing<Sample32>(data,numSamples, inL, inR, outL, outR);
+			}
+			else if (data.symbolicSampleSize == kSample64) {
+				Sample64* inL = data.inputs[0].channelBuffers64[0];
+				Sample64* inR = data.inputs[0].channelBuffers64[1];
+				Sample64* outL = data.outputs[0].channelBuffers64[0];
+				Sample64* outR = data.outputs[0].channelBuffers64[1];
+				this->audioProcessing<Sample64>(data,numSamples, inL, inR, outL, outR);
+
+			}
+			return kResultTrue;
+
+		}
+
+
+		template<typename T>
+		inline void AudioCompressorProcessor::audioProcessing(ProcessData& data, int samples, T * inL, T * inR, T * outL, T * outR)
+		{
 			double cv = 1.0;
 			double minCv = 1.0;
-			for (int i = 0; i < numSamples; i++) {
-				cv = this->envelopeGenerator->processing(inL[i], inR[i]);
+			for (int i = 0; i < samples; i++) {
+				cv = this->envelopeGenerator->processing(
+					static_cast<double>(inL[i]),
+					static_cast<double>(inR[i])
+				);
 				if (minCv > cv) {
 					minCv = cv;
 				}
 				outL[i] = inL[i] * cv * makeUpGain;
-				outR[i] = inR[i] * cv * makeUpGain;
+				outR[i] = inL[i] * cv * makeUpGain;
 			}
-			this->setParameter(ParameterIds::kReduction, 1.0 - minCv, 0);
+			this->setParameter(ParameterIds::kReduction, 1. - minCv, 0);
 			auto outputParmeterChanges = data.outputParameterChanges;
 			int32 index(0);
 			auto parameterQueue = outputParmeterChanges->addParameterData(ParameterIds::kReduction, index);
@@ -177,8 +242,6 @@ namespace Vst {
 				int32 index2(0);
 				parameterQueue->addPoint(0, parameters[kReduction], index2);
 			}
-			return kResultTrue;
-
 		}
 
 	}

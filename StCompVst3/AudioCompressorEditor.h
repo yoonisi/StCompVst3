@@ -1,10 +1,10 @@
 #pragma once
 
+#include <string.h>
 
 #include "public.sdk/source/vst/vstguieditor.h"
 #include "pluginterfaces/vst/ivstplugview.h"
 #include "pluginterfaces/vst/ivstcontextmenu.h"
-#include "vstgui.sf/vstgui/vstcontrols.h"
 
 namespace Steinberg {
 namespace Vst {
@@ -17,7 +17,8 @@ namespace StComp
 		public IContextMenuTarget 
 	{
 	public:
-		AudioCompressorEditor(void* parent);
+		AudioCompressorEditor(void* controller);
+		virtual ~AudioCompressorEditor();
 
 		//-- VSTGUIEditor
 		bool PLUGIN_API open(void* parent);
@@ -42,10 +43,9 @@ namespace StComp
 		tresult PLUGIN_API findParameter(int32 xPos, int32 yPos, ParamID& resultTag);
 
 		//--IContextMenuTarget
-		tresult PLUGIN_API excuteMenuItem(int32 tag);
+		tresult PLUGIN_API executeMenuItem(int32 tag);
 
 		DELEGATE_REFCOUNT(VSTGUIEditor)
-			;
 		tresult PLUGIN_API queryInterface(const char* iid, void** obj);
 
 		void update(ParamID tag, ParamValue value);
@@ -53,6 +53,23 @@ namespace StComp
 	protected:
 		CBitmap* background;
 		double lastReductionMeterValue;
+
+		CVuMeter* reductionMeter;
+		CKnob* thresholdKnob;
+		CParamDisplay* thresholdText;
+		CKnob* ratioKnob;
+		CParamDisplay* ratioText;
+		CKnob* attackKnob;
+		CParamDisplay* attackText;
+		CKnob* releaseKnob;
+		CParamDisplay* releaseText;
+		CKnob* outputKnob;
+		CParamDisplay* outputText;
+		CHorizontalSlider* kneeFader;
+
+		void configParamDisplay(CParamDisplay* text, CColor& fontColor, CColor& bgColor);
+
+		void positonParamDisplay(CRect& size);
 
 	};
 }
