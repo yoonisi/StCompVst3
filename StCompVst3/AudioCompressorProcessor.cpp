@@ -232,7 +232,7 @@ namespace Vst {
 					minCv = cv;
 				}
 				outL[i] = inL[i] * cv * makeUpGain;
-				outR[i] = inL[i] * cv * makeUpGain;
+				outR[i] = inR[i] * cv * makeUpGain;
 			}
 			this->setParameter(ParameterIds::kReduction, 1. - minCv, 0);
 			auto outputParmeterChanges = data.outputParameterChanges;
