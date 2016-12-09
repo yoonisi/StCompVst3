@@ -130,27 +130,6 @@ namespace StComp
 		return VSTGUIEditor::queryInterface(iid, obj);
 	}
 
-	static void configParamDisplay(CParamDisplay* text, CColor& fontColor, CColor& bgColor) {
-		text->setFont(kNormalFontSmall);
-		text->setFontColor(fontColor);
-		text->setBackColor(bgColor);
-		text->setFrameColor(bgColor);
-	}
-
-	static void positonParamDisplay(CRect& size) {
-
-		size.left -= 10;
-		size.right += 10;
-		size.top = kKnobDispY;
-		size.bottom = kKnobDispBottom;
-
-	}
-
-	void DbStringConvert(float value, char* string)
-	{
-		sprintf(string, "%.1fdB", -60.0f * (1.0f - value));
-	}
-
 	bool AudioCompressorEditor::open(void* parent) {
 		if (frame) {
 			return false;
@@ -514,7 +493,19 @@ namespace StComp
 
 	AudioCompressorEditor::~AudioCompressorEditor(){}
 
+	void AudioCompressorEditor::configParamDisplay(CParamDisplay* text, CColor& fontColor, CColor& bgColor) {
+		text->setFont(kNormalFontSmall);
+		text->setFontColor(fontColor);
+		text->setBackColor(bgColor);
+		text->setFrameColor(bgColor);
+	}
 
+	void AudioCompressorEditor::positonParamDisplay(CRect& size) {
+		size.left -= 10;
+		size.right += 10;
+		size.top = kKnobDispY;
+		size.bottom = kKnobDispBottom;
+	}
 }
 }
 }

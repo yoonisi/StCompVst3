@@ -41,17 +41,13 @@ namespace StComp {
 		T attack;
 		T thresholdLevel;
 		T softKnee;
-		T thresholdA;
+		T thresholdQ;
 		T thresholdB;
-		T xOffset;
-		T phai;
-		T bCoef;
-		T cCoef;
 		T sampleRate;
+		T cA;
+		T cP;
 
 		std::unique_ptr<OnePoleLpf<T> > onePoleLpf;
-
-		const double tinyLevel;
 		const double maxAttackFrequency;
 
 	};

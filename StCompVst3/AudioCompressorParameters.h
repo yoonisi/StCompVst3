@@ -162,14 +162,14 @@ namespace StComp {
 			info.flags = flags;
 			info.id = id;
 			info.stepCount = 0;
-			info.defaultNormalizedValue = 0;
+			info.defaultNormalizedValue = 1.0;
 			info.unitId = kRootUnitId;
 			setNormalized(0.0);
 		}
 		
 		virtual void toString(ParamValue normValue, String128 label) const {
 			char text[32] = { 0 };
-			sprintf(text, "%.1f", static_cast<float>(normValue));
+			sprintf(text, "%.1f", static_cast<float>(1.-normValue));
 			Steinberg::UString(label, 128).fromAscii(text);
 			
 		}

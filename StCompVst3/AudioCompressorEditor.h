@@ -67,6 +67,10 @@ namespace StComp
 		CParamDisplay* outputText;
 		CHorizontalSlider* kneeFader;
 
+		void configParamDisplay(CParamDisplay* text, CColor& fontColor, CColor& bgColor);
+
+		void positonParamDisplay(CRect& size);
+
 	};
 }
 }

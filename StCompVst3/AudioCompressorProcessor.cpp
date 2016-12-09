@@ -28,7 +28,10 @@ namespace Vst {
 					setParameter(i, 0.1, 0);
 					break;
 				case ParameterIds::kRelease:
-					setParameter(i, 0.5, 0);
+					setParameter(i, 0.3, 0);
+					break;
+				case ParameterIds::kKnee:
+					setParameter(i, 1.0, 0);
 					break;
 				default:
 					setParameter(i, 0, 0);
@@ -55,6 +58,9 @@ namespace Vst {
 
 		tresult PLUGIN_API AudioCompressorProcessor::canProcessSampleSize(int32 symbolicSampleSize) {
 			if (symbolicSampleSize == kSample32) {
+				return kResultTrue;
+			}
+			if (symbolicSampleSize == kSample64) {
 				return kResultTrue;
 			}
 			return kResultTrue;
@@ -184,29 +190,51 @@ namespace Vst {
 			return kResultOk;
 		}
 
+		
+
 		tresult AudioCompressorProcessor::process(ProcessData& data) 
 		{
 			this->processParameterChanges(data.inputParameterChanges);
 			this->processEvenets(data.inputEvents);
-
-			Sample32* inL = data.inputs[0].channelBuffers32[0];
-			Sample32* inR = data.inputs[0].channelBuffers32[1];
-			Sample32* outL = data.outputs[0].channelBuffers32[0];
-			Sample32* outR = data.outputs[0].channelBuffers32[1];
-
 			auto numSamples = data.numSamples;
 
+			if (data.symbolicSampleSize == kSample32) {
+				Sample32* inL = data.inputs[0].channelBuffers32[0];
+				Sample32* inR = data.inputs[0].channelBuffers32[1];
+				Sample32* outL = data.outputs[0].channelBuffers32[0];
+				Sample32* outR = data.outputs[0].channelBuffers32[1];
+				this->audioProcessing<Sample32>(data,numSamples, inL, inR, outL, outR);
+			}
+			else if (data.symbolicSampleSize == kSample64) {
+				Sample64* inL = data.inputs[0].channelBuffers64[0];
+				Sample64* inR = data.inputs[0].channelBuffers64[1];
+				Sample64* outL = data.outputs[0].channelBuffers64[0];
+				Sample64* outR = data.outputs[0].channelBuffers64[1];
+				this->audioProcessing<Sample64>(data,numSamples, inL, inR, outL, outR);
+
+			}
+			return kResultTrue;
+
+		}
+
+
+		template<typename T>
+		inline void AudioCompressorProcessor::audioProcessing(ProcessData& data, int samples, T * inL, T * inR, T * outL, T * outR)
+		{
 			double cv = 1.0;
 			double minCv = 1.0;
-			for (int i = 0; i < numSamples; i++) {
-				cv = this->envelopeGenerator->processing(inL[i], inR[i]);
+			for (int i = 0; i < samples; i++) {
+				cv = this->envelopeGenerator->processing(
+					static_cast<double>(inL[i]),
+					static_cast<double>(inR[i])
+				);
 				if (minCv > cv) {
 					minCv = cv;
 				}
 				outL[i] = inL[i] * cv * makeUpGain;
-				outR[i] = inR[i] * cv * makeUpGain;
+				outR[i] = inL[i] * cv * makeUpGain;
 			}
-			this->setParameter(ParameterIds::kReduction, 1.0 - minCv, 0);
+			this->setParameter(ParameterIds::kReduction, 1. - minCv, 0);
 			auto outputParmeterChanges = data.outputParameterChanges;
 			int32 index(0);
 			auto parameterQueue = outputParmeterChanges->addParameterData(ParameterIds::kReduction, index);
@@ -214,8 +242,6 @@ namespace Vst {
 				int32 index2(0);
 				parameterQueue->addPoint(0, parameters[kReduction], index2);
 			}
-			return kResultTrue;
-
 		}
 
 	}

@@ -42,6 +42,9 @@ namespace StComp {
 			void setParameter(int index, ParamValue paramValue, int32 sampleOffset);
 			double makeUpGain;
 
+			template<typename T>
+			void audioProcessing(ProcessData& data,int samples, T* inL, T* inR, T* outL, T* outR);
+
 		};
 
 }

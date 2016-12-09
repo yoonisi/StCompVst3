@@ -8,10 +8,15 @@ namespace StComp {
 	template<typename T>
 	EnvelopeGenerator<T>::EnvelopeGenerator()
 		: 
-		tinyLevel(-0.005),
 		maxAttackFrequency(16e3),
 		ratio(0),
 		attack(0),
+		softKnee(0),
+		thresholdLevel(1.0),
+		thresholdQ(1.0),
+		thresholdB(1.0),
+		cA(0),
+		cP(0),
 		onePoleLpf(new OnePoleLpf<T>)
 	{
 		this->clearBuffer();
@@ -67,7 +72,7 @@ namespace StComp {
 
 	template<typename T>
 	void EnvelopeGenerator<T>::setSoftKnee(double knee) {
-		this->softKnee = (1.0 - tinyLevel)*(knee * knee) + tinyLevel;
+		this->softKnee = 0.001 * pow(1000,knee);
 		this->calcThresholdParamters();
 	}
 
@@ -79,17 +84,18 @@ namespace StComp {
 
 	template<typename T>
 	inline void EnvelopeGenerator<T>::calcThresholdParamters() {
-		this->thresholdB = this->thresholdLevel;
-		this->thresholdA = this->softKnee * this->thresholdLevel - tinyLevel;
-		this->xOffset = 2. * (this->thresholdB - this->thresholdA);
-		this->phai = 1.0 / (4.0 * (this->thresholdA - this->thresholdB));
-		this->bCoef = -2.0 * this->xOffset * this->phai;
-		this->cCoef = this->phai * this->xOffset * this->xOffset + this->thresholdB;
-		if (Logger::isLogging(Logger::kINFO)) {
-			stringstream str;
-			str << "thresholdB," << this->thresholdB << ",thresholdA," << this->thresholdA << ",xOffset," << this->xOffset;
-			LOG(Logger::kINFO, str);
-		}
+		using namespace LogTool;
+		this->thresholdQ = this->thresholdLevel;
+		this->thresholdB = this->thresholdLevel * this->softKnee;
+		this->cP =
+			2. * this->thresholdQ + 
+			sqrt(
+				(2.*this->thresholdQ)*(2.*this->thresholdQ) 
+				- 4.*(2. * this->thresholdB*this->thresholdQ - this->thresholdB*this->thresholdB));
+		this->cP /= 2.;
+		T diviser = 2. * (this->thresholdB - this->cP);
+		if (diviser == 0.0) { diviser = 1e-6; }
+		this->cA = 1 / diviser;
 		return;
 	}
 
@@ -111,9 +117,10 @@ namespace StComp {
 		T result = 0.;
 		if (input < this->thresholdB) {
 			;
+		} else if (input < this->cP){
+			result = input - (this->cA*(input - this->cP)*(input - this->cP) + this->thresholdQ);
 		} else {
-			// tentative (not implemented soft knee)
-			result = input - this->thresholdB;
+			result = input - this->thresholdQ;
 		}
 		return result;
 	}
