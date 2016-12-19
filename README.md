@@ -1,2 +1,3 @@
-# StCompVst3
-Compressor Audio Plugin VST3 port.
+# Audio Compressor VST Plugin.
+
+

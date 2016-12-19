@@ -45,6 +45,9 @@ namespace StComp {
 			template<typename T>
 			void audioProcessing(ProcessData& data,int samples, T* inL, T* inR, T* outL, T* outR);
 
+			template<typename T>
+			void audioProcessingMono(ProcessData& data, int samples, T* in, T*out);
+
 		};
 
 }

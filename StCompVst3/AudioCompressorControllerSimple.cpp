@@ -17,39 +17,28 @@ namespace StComp {
 			return result;
 		}
 
-		UnitInfo unitInfo;
-		Unit* unit;
+		addUnit(new Unit(String("Root"), kRootUnitId, kNoParentUnitId));
 
-		// create a unit1 for the gain
-		unitInfo.id = 1;
-		unitInfo.parentUnitId = kRootUnitId;	// attached to the root unit
+		UnitID uid = kRootUnitId;
 
-		Steinberg::UString(unitInfo.name, USTRINGSIZE(unitInfo.name)).assign(USTRING("Unit1"));
-
-		unitInfo.programListId = kNoProgramListId;
-
-		unit = new Unit(unitInfo);
-		addUnit(unit);
-
-		auto thresholdParameter = new ThresholdParameter(ParameterInfo::kCanAutomate, ParameterIds::kThreshold);
+		auto thresholdParameter = new ThresholdParameter(ParameterInfo::kCanAutomate, ParameterIds::kThreshold, uid);
 		parameters.addParameter(thresholdParameter);
-		auto ratioParameter = new RatioParameter(ParameterInfo::kCanAutomate, ParameterIds::kRatio);
+		auto ratioParameter = new RatioParameter(ParameterInfo::kCanAutomate, ParameterIds::kRatio, uid);
 		parameters.addParameter(ratioParameter);
-		auto attackParameter = new AttackParameter(ParameterInfo::kCanAutomate, ParameterIds::kAttack);
+		auto attackParameter = new AttackParameter(ParameterInfo::kCanAutomate, ParameterIds::kAttack, uid);
 		parameters.addParameter(attackParameter);
-		auto releaseParameter = new ReleaseParameter(ParameterInfo::kCanAutomate, ParameterIds::kRelease);
+		auto releaseParameter = new ReleaseParameter(ParameterInfo::kCanAutomate, ParameterIds::kRelease, uid);
 		parameters.addParameter(releaseParameter);
-		auto outputParameter = new OutputParameter(ParameterInfo::kCanAutomate, ParameterIds::kOutput);
+		auto outputParameter = new OutputParameter(ParameterInfo::kCanAutomate, ParameterIds::kOutput, uid);
 		parameters.addParameter(outputParameter);
-		auto kneeParameter = new KneeParameter(ParameterInfo::kCanAutomate, ParameterIds::kKnee);
+		auto kneeParameter = new KneeParameter(ParameterInfo::kCanAutomate, ParameterIds::kKnee, uid);
 		parameters.addParameter(kneeParameter);
-		auto reductionParameter = new ReductionParameter(ParameterInfo::kIsReadOnly, ParameterIds::kReduction);
+		auto reductionParameter = new ReductionParameter(ParameterInfo::kIsReadOnly, ParameterIds::kReduction, uid);
 		parameters.addParameter(reductionParameter);
 
-		for (int i = 0; i < parameters.getParameterCount(); i++) {
-			parameters.getParameterByIndex(i)->setUnitID(1);
-		}
-
+		ProgramList* programList = new ProgramList(String("Preset"), 'prg', kRootUnitId);
+		programList->addProgram(String("default"));
+		parameters.addParameter(programList->getParameter());
 		return kResultOk;
 	}
 
@@ -77,6 +66,7 @@ namespace StComp {
 	}
 
 	IPlugView* PLUGIN_API AudioCompressorControllerSimple::createView(const char * name) {
+		LOG(Logger::kINFO, name);
 		if (name != 0 && strcmp(name, "editor") == 0) {
 			auto view = new AudioCompressorEditor(this);
 			return view;
