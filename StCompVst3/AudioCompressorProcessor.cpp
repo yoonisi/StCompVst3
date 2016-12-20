@@ -270,6 +270,9 @@ namespace Vst {
 			double minCv = 1.0;
 			for (int i = 0; i < samples; i++) {
 				cv = this->envelopeGenerator->processing(static_cast<double>(in[i]),static_cast<double>(in[i]));
+				if (minCv > cv) {
+					minCv = cv;
+				}
 				out[i] = in[i] * cv * makeUpGain;
 			}
 			this->setParameter(ParameterIds::kReduction, 1. - minCv, 0);
