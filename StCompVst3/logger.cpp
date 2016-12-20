@@ -22,9 +22,14 @@ namespace LogTool
 		*logfile << file << "," << line << "," << func << "," << message << endl;
 	}
 
+	void Logger::Log(LogLevel level, const char * file, const char* func, const int line, const string& message) {
+		Logger::Log(level, file, func, line, message.c_str());
+	}
+
 	void Logger::Log(LogLevel level, const char * file, const char* func, const int line, stringstream& sstream) {
 		Logger::Log(level, file, func, line, sstream.str().c_str());
 	}
+
 
 	bool Logger::isLogging(Logger::LogLevel level) {
 #ifdef _DEBUG

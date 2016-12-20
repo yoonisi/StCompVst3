@@ -18,6 +18,7 @@ namespace LogTool
 		};
 
 		static void Log(LogLevel level, const char* file, const char* func, const int line, const char* message);
+		static void Log(LogLevel level, const char* file, const char* func, const int line, const std::string& message);
 		static void Log(LogLevel level, const char* file, const char* func, const int line, std::stringstream& message);
 		static bool isLogging(LogLevel level);
 		

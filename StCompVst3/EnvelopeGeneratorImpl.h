@@ -55,6 +55,7 @@ namespace StComp {
 		this->sampleRate = sampleRate;
 		this->onePoleLpf->setSampleRate(sampleRate);
 		this->setAttackTime(this->attack);
+		this->clearBuffer();
 	}
 
 	template<typename T>

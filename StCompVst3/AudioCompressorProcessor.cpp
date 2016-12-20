@@ -68,6 +68,12 @@ namespace Vst {
 
 		tresult PLUGIN_API AudioCompressorProcessor::setupProcessing(ProcessSetup& newSetup) {
 			sampleRate = newSetup.sampleRate;
+			this->envelopeGenerator->setSampleRate(sampleRate);
+			if (Logger::isLogging(Logger::kINFO)) {
+				std::stringstream message;
+				message << "SampleRate: " << sampleRate;
+				LOG(Logger::kINFO, message);
+			}
 			return AudioEffect::setupProcessing(newSetup);
 		}
 
@@ -142,7 +148,7 @@ namespace Vst {
 				else if (inputs[0] == SpeakerArr::kMono && outputs[0] == SpeakerArr::kMono)
 				{
 					// mono channel
-					return kResultFalse; // stub
+					return AudioEffect::setBusArrangements(inputs, numInputs, outputs, numOutputs);
 				}
 			}
 			return kResultFalse;
@@ -158,12 +164,6 @@ namespace Vst {
 					return kResultFalse;
 				}
 				this->setParameter(i, static_cast<ParamValue>(parameterToLoad), 0);
-
-				if (Logger::isLogging(Logger::kINFO)) {
-					std::stringstream log;
-					log << i << "," << parameterToLoad;
-					LOG(Logger::kINFO, log);
-				}
 
 			}
 			return kResultOk;
@@ -198,23 +198,43 @@ namespace Vst {
 			this->processEvenets(data.inputEvents);
 			auto numSamples = data.numSamples;
 
-			if (data.symbolicSampleSize == kSample32) {
-				Sample32* inL = data.inputs[0].channelBuffers32[0];
-				Sample32* inR = data.inputs[0].channelBuffers32[1];
-				Sample32* outL = data.outputs[0].channelBuffers32[0];
-				Sample32* outR = data.outputs[0].channelBuffers32[1];
-				this->audioProcessing<Sample32>(data,numSamples, inL, inR, outL, outR);
-			}
-			else if (data.symbolicSampleSize == kSample64) {
-				Sample64* inL = data.inputs[0].channelBuffers64[0];
-				Sample64* inR = data.inputs[0].channelBuffers64[1];
-				Sample64* outL = data.outputs[0].channelBuffers64[0];
-				Sample64* outR = data.outputs[0].channelBuffers64[1];
-				this->audioProcessing<Sample64>(data,numSamples, inL, inR, outL, outR);
+			auto numChannels = data.inputs[0].numChannels;
 
+			if (numChannels == 2) {
+
+				if (data.symbolicSampleSize == kSample32) {
+					Sample32* inL = data.inputs[0].channelBuffers32[0];
+					Sample32* inR = data.inputs[0].channelBuffers32[1];
+					Sample32* outL = data.outputs[0].channelBuffers32[0];
+					Sample32* outR = data.outputs[0].channelBuffers32[1];
+					this->audioProcessing<Sample32>(data, numSamples, inL, inR, outL, outR);
+				}
+				else if (data.symbolicSampleSize == kSample64) {
+					Sample64* inL = data.inputs[0].channelBuffers64[0];
+					Sample64* inR = data.inputs[0].channelBuffers64[1];
+					Sample64* outL = data.outputs[0].channelBuffers64[0];
+					Sample64* outR = data.outputs[0].channelBuffers64[1];
+					this->audioProcessing<Sample64>(data, numSamples, inL, inR, outL, outR);
+
+				}
+			}
+			else if (numChannels == 1) {
+
+				if (data.symbolicSampleSize == kSample32) {
+					Sample32* in = data.inputs[0].channelBuffers32[0];
+					Sample32* out = data.outputs[0].channelBuffers32[0];
+					this->audioProcessingMono<Sample32>(data, numSamples, in, out);
+				}
+				else if (data.symbolicSampleSize == kSample64) {
+					Sample64* in = data.inputs[0].channelBuffers64[0];
+					Sample64* out = data.outputs[0].channelBuffers64[0];
+					this->audioProcessingMono<Sample64>(data, numSamples, in, out);
+				}
+			}
+			else {
+				return kResultFalse;
 			}
 			return kResultTrue;
-
 		}
 
 
@@ -238,6 +258,24 @@ namespace Vst {
 			auto outputParmeterChanges = data.outputParameterChanges;
 			int32 index(0);
 			auto parameterQueue = outputParmeterChanges->addParameterData(ParameterIds::kReduction, index);
+			if (parameterQueue) {
+				int32 index2(0);
+				parameterQueue->addPoint(0, parameters[kReduction], index2);
+			}
+		}
+
+		template<typename T>
+		inline void AudioCompressorProcessor::audioProcessingMono(ProcessData& data, int samples, T* in, T* out) {
+			double cv = 1.0;
+			double minCv = 1.0;
+			for (int i = 0; i < samples; i++) {
+				cv = this->envelopeGenerator->processing(static_cast<double>(in[i]),static_cast<double>(in[i]));
+				out[i] = in[i] * cv * makeUpGain;
+			}
+			this->setParameter(ParameterIds::kReduction, 1. - minCv, 0);
+			auto outputParameterChanges = data.outputParameterChanges;
+			int32 index(0);
+			auto parameterQueue = outputParameterChanges->addParameterData(ParameterIds::kReduction, index);
 			if (parameterQueue) {
 				int32 index2(0);
 				parameterQueue->addPoint(0, parameters[kReduction], index2);
