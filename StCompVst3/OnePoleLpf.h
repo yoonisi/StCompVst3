@@ -1,13 +1,14 @@
 #pragma once
 
 #include "public.sdk\source\vst\vstaudioeffect.h"
+#include "ISimpleFilter.h"
 
 namespace Steinberg {
 namespace Vst {
-namespace StComp {
+
 
 	template<typename T>
-	class OnePoleLpf {
+	class OnePoleLpf : public ISimpleFilter<T> {
 	public:
 		OnePoleLpf();
 		virtual ~OnePoleLpf();
@@ -19,7 +20,6 @@ namespace StComp {
 		void clearBuffer();
 
 	private:
-		T preWarp(T freq);
 		void calcCoefficients();
 		SampleRate sampleRate;
 		T cutoffFrequency;
@@ -29,7 +29,7 @@ namespace StComp {
 
 	};
 
-}
+
 }
 }
 

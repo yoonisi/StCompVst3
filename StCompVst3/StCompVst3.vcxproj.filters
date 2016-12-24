@@ -133,6 +133,21 @@
     <ClInclude Include="..\VST3 SDK\vstgui.sf\vstgui\vstcontrols.h">
       <Filter>vstgui.sf</Filter>
     </ClInclude>
+    <ClInclude Include="IirLpf.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="IirLpfImpl.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="ISimpleFilter.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="IirHpf.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="IirHpfImpl.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc">

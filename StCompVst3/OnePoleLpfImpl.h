@@ -7,7 +7,6 @@
 
 namespace Steinberg {
 namespace Vst {
-namespace StComp {
 
 	template<typename T>
 	OnePoleLpf<T>::OnePoleLpf() : sampleRate(44.1e3), cutoffFrequency(1e3) {
@@ -52,20 +51,13 @@ namespace StComp {
 
 	template<typename T>
 	void OnePoleLpf<T>::calcCoefficients() {
-		T omegaC = preWarp(this->cutoffFrequency);
+		T omegaC = DspUtils::prewarpFrequency<double>(this->cutoffFrequency, this->sampleRate);
 		T omegaS = 2. * M_PI * this->sampleRate;
 		this->coeAlpha = (M_PI * omegaC) / (M_PI * omegaC + omegaS);
 		this->coeBeta = (omegaS - M_PI * omegaC) / (M_PI * omegaC + omegaS);
 		return;
 	}
 
-	template<typename T>
-	T OnePoleLpf<T>::preWarp(T frequency) {
-		T tau = 1.0 / this->sampleRate;
-		T omega = 2 * M_PI * frequency;
-		return 2.0 / tau * tan(omega * tau / 2);
-	}
 
-}
 }
 }

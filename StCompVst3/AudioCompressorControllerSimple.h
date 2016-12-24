@@ -29,7 +29,7 @@ namespace StComp {
 
 		tresult receiveText(const char* text);
 
-		DELEGATE_REFCOUNT(EditController)
+		DELEGATE_REFCOUNT(EditControllerEx1)
 		tresult PLUGIN_API queryInterface(const char* iid, void** obj);
 
 		void addDependentView(AudioCompressorEditor* view);

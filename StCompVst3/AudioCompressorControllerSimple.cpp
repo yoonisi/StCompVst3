@@ -37,6 +37,7 @@ namespace StComp {
 		parameters.addParameter(reductionParameter);
 
 		ProgramList* programList = new ProgramList(String("Preset"), 'prg', kRootUnitId);
+		this->addProgramList(programList);
 		programList->addProgram(String("default"));
 		parameters.addParameter(programList->getParameter());
 		return kResultOk;

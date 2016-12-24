@@ -196,6 +196,11 @@
     <ClInclude Include="DspUtils.h" />
     <ClInclude Include="EnvelopeGenerator.h" />
     <ClInclude Include="EnvelopeGeneratorImpl.h" />
+    <ClInclude Include="IirHpf.h" />
+    <ClInclude Include="IirHpfImpl.h" />
+    <ClInclude Include="IirLpf.h" />
+    <ClInclude Include="IirLpfImpl.h" />
+    <ClInclude Include="ISimpleFilter.h" />
     <ClInclude Include="logger.h" />
     <ClInclude Include="OnePoleLpf.h" />
     <ClInclude Include="OnePoleLpfImpl.h" />

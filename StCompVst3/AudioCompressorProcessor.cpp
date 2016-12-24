@@ -269,7 +269,10 @@ namespace Vst {
 			double cv = 1.0;
 			double minCv = 1.0;
 			for (int i = 0; i < samples; i++) {
-				cv = this->envelopeGenerator->processing(static_cast<double>(in[i]),static_cast<double>(in[i]));
+				cv = this->envelopeGenerator->processing(
+					static_cast<double>(in[i]),
+					0.0
+				);
 				if (minCv > cv) {
 					minCv = cv;
 				}

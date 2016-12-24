@@ -2,6 +2,8 @@
 
 #include "public.sdk\source\vst\vstaudioeffect.h"
 #include "OnePoleLpf.h"
+#include "IirLpf.h"
+#include "IirHpf.h"
 #include <stdint.h>
 #include <memory>
 
@@ -47,7 +49,7 @@ namespace StComp {
 		T cA;
 		T cP;
 
-		std::unique_ptr<OnePoleLpf<T> > onePoleLpf;
+		std::unique_ptr<ISimpleFilter<T> > onePoleLpf;
 		const double maxAttackFrequency;
 
 	};
