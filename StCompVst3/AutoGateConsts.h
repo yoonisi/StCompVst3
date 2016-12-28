@@ -17,7 +17,7 @@ namespace StGate {
 		kKeyHpfCutoff,
 		kKeyLpfCutoff,
 		kBypassProcess,
-		kNumParameters
+		kNumParams
 	};
 
 }

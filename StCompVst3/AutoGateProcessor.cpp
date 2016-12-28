@@ -11,14 +11,14 @@ namespace StGate {
 		sampleRate(44.1e3),
 		lowPassFilter(new IirLpf<double>()),
 		highPassFilter(new IirHpf<double>()),
-		parameters(new ParamValue[kNumParameters])
+		parameters(new ParamValue[ParameterIds::kNumParams])
 	{
 
 
 		this->lowPassFilter->setCutoffFrequency(20e3);
 		this->highPassFilter->setCutoffFrequency(100);
 
-		for (int i = 0; i < ParameterIds::kNumParameters; i++) {
+		for (int i = 0; i < ParameterIds::kNumParams; i++) {
 			switch (i)
 			{
 			case ParameterIds::kKeyLpfCutoff:
@@ -82,7 +82,7 @@ namespace StGate {
 
 	tresult PLUGIN_API AutoGateProcessor::setState(IBStream * state)
 	{
-		for (int i = 0; i < ParameterIds::kNumParameters; i++) {
+		for (int i = 0; i < ParameterIds::kNumParams; i++) {
 			double parameterToLoad(0);
 			if (state->read(&parameterToLoad, sizeof(double)) != kResultOk) {
 				return kResultFalse;
@@ -96,7 +96,7 @@ namespace StGate {
 	tresult PLUGIN_API AutoGateProcessor::getState(IBStream * state)
 	{
 
-		for (int i = 0; i < ParameterIds::kNumParameters; i++) {
+		for (int i = 0; i < ParameterIds::kNumParams; i++) {
 			double parameterToSave = static_cast<double>(this->parameters[i]);
 #if BYTEORDER == kBigEndian
 			SWAP_64(parameterToSave, sizeof(double))
@@ -148,7 +148,7 @@ namespace StGate {
 	}
 
 	void AutoGateProcessor::setParameter(int index, ParamValue paramValue, int32 sampleOffset) {
-		if (index >= ParameterIds::kNumParameters) {
+		if (index >= ParameterIds::kNumParams) {
 			return;
 		}
 		this->parameters[index] = paramValue;
