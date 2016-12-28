@@ -35,6 +35,8 @@ namespace StComp {
 		parameters.addParameter(kneeParameter);
 		auto reductionParameter = new ReductionParameter(ParameterInfo::kIsReadOnly, ParameterIds::kReduction, uid);
 		parameters.addParameter(reductionParameter);
+		auto bypassParameter = new BypassParameter(ParameterInfo::kCanAutomate | ParameterInfo::kIsBypass, ParameterIds::kBypassProcess, uid);
+		parameters.addParameter(bypassParameter);
 
 		ProgramList* programList = new ProgramList(String("Preset"), 'prg', kRootUnitId);
 		this->addProgramList(programList);

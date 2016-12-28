@@ -197,6 +197,19 @@ namespace StComp {
 		
 	};
 
+	class BypassParameter : public Parameter {
+	public:
+		BypassParameter(int32 flags, int32 id, UnitID unitID = kRootUnitId) {
+			Steinberg::UString(info.title, USTRINGSIZE(info.title)).assign(USTRING("Bypass"));
+			info.flags = flags | ParameterInfo::kCanAutomate | ParameterInfo::kIsBypass;
+			info.id = id;
+			info.stepCount = 1;
+			info.defaultNormalizedValue = 0;
+			info.unitId = unitID;
+			setNormalized(0.0);
+		}
+	};
+
 }
 }
 }

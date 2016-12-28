@@ -13,6 +13,7 @@ namespace Steinberg {
 				kOutput,
 				kKnee,
 				kReduction,
+				kBypassProcess,
 				kNumParams
 			};
 

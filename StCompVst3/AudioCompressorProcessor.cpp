@@ -241,6 +241,18 @@ namespace Vst {
 		template<typename T>
 		inline void AudioCompressorProcessor::audioProcessing(ProcessData& data, int samples, T * inL, T * inR, T * outL, T * outR)
 		{
+			if (this->parameters[ParameterIds::kBypassProcess] > 0.5) {
+				auto sampleBufferSize = getSampleFramesSizeInBytes(data.numSamples);
+				if (inL != outL)
+				{
+					memcpy(outL, inL, sampleBufferSize);
+				}
+				if (inR != outR) {
+					memcpy(outR, inR, sampleBufferSize);
+				}
+				this->envelopeGenerator->clearBuffer();
+				return;
+			}
 			double cv = 1.0;
 			double minCv = 1.0;
 			for (int i = 0; i < samples; i++) {
@@ -266,6 +278,15 @@ namespace Vst {
 
 		template<typename T>
 		inline void AudioCompressorProcessor::audioProcessingMono(ProcessData& data, int samples, T* in, T* out) {
+			if (parameters[ParameterIds::kBypassProcess] > 0.5) {
+				auto sampleBufferSize = getSampleFramesSizeInBytes(data.numSamples);
+				if (in != out)
+				{
+					memcpy(out, in, sampleBufferSize);
+				}
+				this->envelopeGenerator->clearBuffer();
+				return;
+			}
 			double cv = 1.0;
 			double minCv = 1.0;
 			for (int i = 0; i < samples; i++) {
