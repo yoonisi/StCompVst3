@@ -177,6 +177,7 @@
     <ClCompile Include="AudioCompressorControllerSimple.cpp" />
     <ClCompile Include="AudioCompressorEditor.cpp" />
     <ClCompile Include="AudioCompressorProcessor.cpp" />
+    <ClCompile Include="AutoGateController.cpp" />
     <ClCompile Include="AutoGateProcessor.cpp" />
     <ClCompile Include="logger.cpp" />
     <ClCompile Include="pluginEntries.cpp" />
@@ -195,6 +196,7 @@
     <ClInclude Include="AudioCompressorParameters.h" />
     <ClInclude Include="AudioCompressorProcessor.h" />
     <ClInclude Include="AutoGateConsts.h" />
+    <ClInclude Include="AutoGateController.h" />
     <ClInclude Include="AutoGateParameters.h" />
     <ClInclude Include="AutoGateProcessor.h" />
     <ClInclude Include="DspUtils.h" />

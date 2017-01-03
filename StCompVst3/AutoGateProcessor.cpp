@@ -2,6 +2,7 @@
 #include "AutoGateConsts.h"
 #include "pluginterfaces/vst/ivstparameterchanges.h"
 #include "pluginterfaces/base/ibstream.h"
+#include "AutoGateParameters.h"
 
 namespace Steinberg {
 namespace Vst {
@@ -9,14 +10,15 @@ namespace StGate {
 
 	AutoGateProcessor::AutoGateProcessor() :
 		sampleRate(44.1e3),
-		lowPassFilter(new IirLpf<double>()),
-		highPassFilter(new IirHpf<double>()),
+		lowPassFilter(new IirLpf<double>[2]),
+		highPassFilter(new IirHpf<double>[2]),
 		parameters(new ParamValue[ParameterIds::kNumParams])
 	{
 
-
-		this->lowPassFilter->setCutoffFrequency(20e3);
-		this->highPassFilter->setCutoffFrequency(100);
+		this->lowPassFilter[0].setCutoffFrequency(20e3);
+		this->lowPassFilter[1].setCutoffFrequency(20e3);
+		this->highPassFilter[0].setCutoffFrequency(20);
+		this->highPassFilter[1].setCutoffFrequency(20);
 
 		for (int i = 0; i < ParameterIds::kNumParams; i++) {
 			switch (i)
@@ -74,7 +76,8 @@ namespace StGate {
 			else if (inputs[0] == SpeakerArr::kMono && outputs[0] == SpeakerArr::kMono)
 			{
 				// mono channel
-				return AudioEffect::setBusArrangements(inputs, numInputs, outputs, numOutputs);
+//				return AudioEffect::setBusArrangements(inputs, numInputs, outputs, numOutputs);
+				return kResultFalse;
 			}
 		}
 		return kResultFalse;
@@ -120,8 +123,10 @@ namespace StGate {
 	tresult PLUGIN_API AutoGateProcessor::setupProcessing(ProcessSetup& setup) {
 		this->sampleRate = setup.sampleRate;
 		
-		this->lowPassFilter->setSampleRate(this->sampleRate);
-		this->highPassFilter->setSampleRate(this->sampleRate);
+		this->lowPassFilter[0].setSampleRate(this->sampleRate);
+		this->lowPassFilter[1].setSampleRate(this->sampleRate);
+		this->highPassFilter[0].setSampleRate(this->sampleRate);
+		this->highPassFilter[1].setSampleRate(this->sampleRate);
 		return AudioEffect::setupProcessing(setup);
 
 	}
@@ -154,11 +159,60 @@ namespace StGate {
 		this->parameters[index] = paramValue;
 		switch (index)
 		{
+		case ParameterIds::kKeyLpfCutoff:
+			this->lowPassFilter[0].setCutoffFrequency(LpfCutoffParameter::valueConvert(parameters[index]));
+			this->lowPassFilter[1].setCutoffFrequency(LpfCutoffParameter::valueConvert(parameters[index]));
+			break;
+		case ParameterIds::kKeyHpfCutoff:
+			this->highPassFilter[0].setCutoffFrequency(HpfCutoffParameter::valueConvert(parameters[index]));
+			this->highPassFilter[1].setCutoffFrequency(HpfCutoffParameter::valueConvert(parameters[index]));
+			break;
 		default:
 			break;
 		}
 	}
 
+	template<typename T>
+	inline void AutoGateProcessor::audioProcessing(ProcessData & data, int samples, T * inL, T * inR, T * outL, T * outR)
+	{
+		if (parameters[ParameterIds::kBypassProcess] > 0.5) {
+			if (inL != outL) {
+				for (int i = 0; i < samples; i++) {
+					outL[i] = inL[i];
+				}
+			}
+			if (inR != outR) {
+				for (int i = 0; i < samples; i++) {
+					outR[i] = inR[i];
+				}
+			}
+		}
+		else {
+			for (int i = 0; i < samples; i++) {
+				// pre fileter
+				double keyL = this->highPassFilter[0].processing(inL[i]);
+				KeyL = this->lowPassFilter[0].processing(keyL);
+				double keyR = this->highPassFilter[1].processing(inR[i]);
+				KeyR = this->lowPassFilter[1].processing(keyR);
+
+				// envelope generator
+
+				if (parameters[ParameterIds::kKeyListen] > 0.5) {
+					outL[i] = keyL;
+					outR[i] = keyR;
+				}
+				else {
+					outL[i] = inL[i];
+					outR[i] = inR[i];
+				}
+			}
+		}
+	}
+
+	template<typename T>
+	void AutoGateProcessor::audioProcessingMono(ProcessData & data, int samples, T * in, T * out)
+	{
+	}
 
 
 }

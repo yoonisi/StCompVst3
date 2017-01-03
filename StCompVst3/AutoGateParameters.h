@@ -143,7 +143,112 @@ namespace StGate {
 	{
 	public:
 		RatioParameter(int32 id, UnitID uid) {
-			Steinberg::UString(info.title, USTRINGSIZE(info.title)).assign(USTRING("Hold"));
+			Steinberg::UString(info.title, USTRINGSIZE(info.title)).assign(USTRING("Expand Ratio"));
+			info.defaultNormalizedValue = 0.0;
+			info.flags = ParameterInfo::kCanAutomate;
+			info.id = id;
+			info.unitId = uid;
+			info.stepCount = 0;
+			setNormalized(0.0);
+		}
+
+		static double valueConvert(double normalizedValue) {
+			const double maxExpandRatio = 30;
+			double expandRatio = 1;
+			double invNormalizedValue = 1.0 - normalizedValue;
+			if (invNormalizedValue < (1/expandRatio)) {
+				expandRatio = maxExpandRatio;
+			}
+			else {
+				expandRatio = 1 / invNormalizedValue;
+			}
+			return expandRatio;
+		}
+
+		static void stringConvert(float value, char* string) {
+			float expandRatio = valueConvert(value);
+			sprintf(string, "%.1f : 1", expandRatio);
+		}
+
+		virtual void toString(ParamValue normValue, String128 label) const {
+			char text[32] = { 0 };
+			stringConvert(normValue, text);
+			Steinberg::UString(label, 128).fromAscii(text);
+		}
+
+	};
+
+	class KeyListendParameter : public Parameter {
+	public:
+		KeyListendParameter(int32 id, UnitID uid) {
+			Steinberg::UString(info.title, USTRINGSIZE(info.title)).assign(USTRING("Key Listen"));
+			info.defaultNormalizedValue = 0;
+			info.flags = ParameterInfo::kCanAutomate;
+			info.id = id;
+			info.unitId = uid;
+			info.stepCount = 1;
+			setNormalized(0);
+		}
+
+	};
+
+	class DuckerParameter : public Parameter {
+	public:
+		DuckerParameter(int32 id, UnitID uid) {
+			Steinberg::UString(info.title, USTRINGSIZE(info.title)).assign(USTRING("Ducker Mode"));
+			info.defaultNormalizedValue = 0;
+			info.flags = ParameterInfo::kCanAutomate;
+			info.id = id;
+			info.unitId = uid;
+			info.stepCount = 1;
+			setNormalized(0);
+		}
+	};
+
+	class LpfCutoffParameter : public Parameter {
+	public:
+		LpfCutoffParameter(int32 id, UnitID uid) {
+			Steinberg::UString(info.title, USTRINGSIZE(info.title)).assign(USTRING("Key LPF Cutoff"));
+			info.defaultNormalizedValue = 1.0;
+			info.flags = ParameterInfo::kCanAutomate;
+			info.id = id;
+			info.unitId = uid;
+			info.stepCount = 0;
+			setNormalized(1.0);
+		}
+
+		static double valueConvert(double normalizedValue) {
+			const double maxCutoffFrequency = 20e3;
+			const double minCutoffFrequency = 20;
+			double biParam = normalizedValue * normalizedValue;
+			return (maxCutoffFrequency - minCutoffFrequency) * biParam + minCutoffFrequency;
+		}
+
+		static void stringConvert(float value, char* string) {
+			double frequency = valueConvert(value);
+			sprintf(string, "%.1f Hz", frequency);
+		}
+
+		virtual void toString(ParamValue normValue, String128 label) const {
+			char text[32] = { 0 };
+			stringConvert(normValue, text);
+			Steinberg::UString(label, 128).fromAscii(text);
+		}
+
+	};
+
+	typedef LpfCutoffParameter HpfCutoffParameter;
+
+	class BypassParameter : public Parameter {
+	public:
+		BypassParameter(int32 flags, int32 id, UnitID unitID = kRootUnitId) {
+			Steinberg::UString(info.title, USTRINGSIZE(info.title)).assign(USTRING("Bypass"));
+			info.flags = flags | ParameterInfo::kCanAutomate | ParameterInfo::kIsBypass;
+			info.id = id;
+			info.stepCount = 1;
+			info.defaultNormalizedValue = 0;
+			info.unitId = unitID;
+			setNormalized(0.0);
 		}
 	};
 

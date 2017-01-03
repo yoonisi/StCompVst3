@@ -35,14 +35,19 @@ namespace StGate {
 
 	private:
 		SampleRate sampleRate;
-		std::unique_ptr<IirHpf<double> > highPassFilter;
-		std::unique_ptr<IirLpf<double> > lowPassFilter;
+		std::unique_ptr<IirHpf<double>[] > highPassFilter;
+		std::unique_ptr<IirLpf<double>[] > lowPassFilter;
 		std::unique_ptr<ParamValue[]> parameters;
 
 		bool processParameterChanges(IParameterChanges* changes);
 		bool processEvenets(IEventList* events);
 		void setParameter(int index, ParamValue paramValue, int32 sampleOffset);
 
+		template<typename T>
+		void audioProcessing(ProcessData& data, int samples, T* inL, T* inR, T* outL, T* outR);
+
+		template<typename T>
+		void audioProcessingMono(ProcessData& data, int samples, T* in, T*out);
 
 	};
 
