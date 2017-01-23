@@ -12,6 +12,7 @@ namespace StGate {
 		sampleRate(44.1e3),
 		lowPassFilter(new IirLpf<double>[2]),
 		highPassFilter(new IirHpf<double>[2]),
+		envelopeGenerator(new AutoGateEG<double>()),
 		parameters(new ParamValue[ParameterIds::kNumParams])
 	{
 

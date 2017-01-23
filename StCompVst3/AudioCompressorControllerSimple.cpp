@@ -12,7 +12,7 @@ namespace StComp {
 	using namespace LogTool;
 
 	tresult PLUGIN_API AudioCompressorControllerSimple::initialize(FUnknown* context) {
-		tresult result = EditController::initialize(context);
+		tresult result = EditControllerEx1::initialize(context);
 		if (result != kResultOk) {
 			return result;
 		}

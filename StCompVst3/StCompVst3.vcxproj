@@ -197,6 +197,8 @@
     <ClInclude Include="AudioCompressorProcessor.h" />
     <ClInclude Include="AutoGateConsts.h" />
     <ClInclude Include="AutoGateController.h" />
+    <ClInclude Include="AutoGateEG.h" />
+    <ClInclude Include="AutoGateEGImpl.h" />
     <ClInclude Include="AutoGateParameters.h" />
     <ClInclude Include="AutoGateProcessor.h" />
     <ClInclude Include="DspUtils.h" />

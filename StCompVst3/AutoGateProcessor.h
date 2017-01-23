@@ -2,7 +2,7 @@
 
 #include "public.sdk\source\vst\vstaudioeffect.h"
 #include <memory>
-#include "EnvelopeGenerator.h"
+#include "AutoGateEG.h"
 #include "IirHpf.h"
 #include "IirLpf.h"
 
@@ -37,6 +37,7 @@ namespace StGate {
 		SampleRate sampleRate;
 		std::unique_ptr<IirHpf<double>[] > highPassFilter;
 		std::unique_ptr<IirLpf<double>[] > lowPassFilter;
+		std::unique_ptr<AutoGateEG<double> > envelopeGenerator;
 		std::unique_ptr<ParamValue[]> parameters;
 
 		bool processParameterChanges(IParameterChanges* changes);
