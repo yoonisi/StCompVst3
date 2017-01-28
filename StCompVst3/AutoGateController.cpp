@@ -24,6 +24,8 @@ tresult PLUGIN_API StGate::AutoGateController::initialize(FUnknown * context)
 	parameters.addParameter(holdParameter);
 	auto releaseParameter = new ReleaseParameter(ParameterIds::kRelease, uid);
 	parameters.addParameter(releaseParameter);
+	auto rangeParameter = new RangeParameter(ParameterIds::kRange, uid);
+	parameters.addParameter(rangeParameter);
 	auto keyListenParameter = new KeyListendParameter(ParameterIds::kKeyListen, uid);
 	parameters.addParameter(keyListenParameter);
 	auto duckerParameter = new DuckerParameter(ParameterIds::kDucker, uid);

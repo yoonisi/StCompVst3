@@ -20,6 +20,7 @@ namespace StGate {
 		void setReleaseTime(double normalizedRelease);
 		void setHoldTime(double normalizedHold);
 		void setThreshold(double normalizedThreshold);
+		void setRange(double normalizedRange);
 		void setRatio(double normalizedRatio);
 		void setDuckerMode(double normalizedDuckerMode);
 		void clearBuffer();
@@ -32,6 +33,7 @@ namespace StGate {
 		T hold;
 		T threshold;
 		T ratio;
+		T range;
 		bool isDuckerMode;
 
 		T peakBuffer;
@@ -40,7 +42,7 @@ namespace StGate {
 
 		inline T absOr(T inL, T inR);
 		inline T peakHold(T input);
-
+		inline T thesholdCut(T input);
 	};
 
 }

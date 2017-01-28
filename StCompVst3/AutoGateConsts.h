@@ -12,6 +12,7 @@ namespace StGate {
 		kHold,
 		kRelease,
 		kRatio,
+		kRange,
 		kKeyListen,
 		kDucker,
 		kKeyHpfCutoff,

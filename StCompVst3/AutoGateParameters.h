@@ -46,6 +46,43 @@ namespace StGate {
 
 	};
 
+
+	class RangeParameter : public Parameter
+	{
+	public:
+		RangeParameter(uint32 id, UnitID uid = kRootUnitId) {
+			Steinberg::UString(info.title, USTRINGSIZE(info.title)).assign(USTRING("Range"));
+			info.flags = ParameterInfo::kCanAutomate;
+			info.stepCount = 0;
+			info.defaultNormalizedValue = 0.0;
+			info.id = id;
+			info.unitId = uid;
+			setNormalized(0.0);
+		}
+
+		static double valueConvert(double normalizeParameter) {
+			return normalizeParameter * normalizeParameter;
+		}
+
+		static void stringConvert(float value, char* string) {
+			if (value <= 1e-6) {
+				sprintf(string, "-oo dB");
+			}
+			else {
+				double dB = 20 * log10(valueConvert(value));
+				sprintf(string, "%.1f dB", (float)dB);
+			}
+		}
+
+		virtual void toString(ParamValue normValue, String128 label) const {
+			char text[32] = { 0 };
+			stringConvert(normValue, text);
+			Steinberg::UString(label, 128).fromAscii(text);
+		}
+
+	};
+
+
 	class AttackParameter : public Parameter {
 	public:
 		AttackParameter(int32 id, UnitID uid = kRootUnitId) {

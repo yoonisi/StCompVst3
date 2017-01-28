@@ -51,6 +51,11 @@ namespace StGate {
 	}
 
 	template<typename T>
+	void AutoGateEG<T>::setRange(double normalizedRange) {
+		this->range = RangeParameter::valueConvert(normalizedRange);
+	}
+
+	template<typename T>
 	void AutoGateEG<T>::setHoldTime(double normalizedHold) {
 		this->hold = HoldParameter::valueConvert(normalizedHold);
 	}
@@ -84,26 +89,33 @@ namespace StGate {
 		return (absL > absR) ? absL : absR;
 	}
 
+	
+
 	template<typename T>
 	inline T AutoGateEG<T>::peakHold(T input)
 	{
-		if (this->outputBuffer < input) { // get peak
+		if ((this->outputBuffer < input) && (this->threshold < input)) { // get peak
 			this->peakBuff = this->outputBuffer = input;
 			this->peakCount = 0;
 		}
 		else {
-			bool isHold = static_cast<T>(this->peakCount) < (static_cast<T>(this->hold) * static_cast<T>(sampleRate));
-			bool isRelease = static_cast<T>(this->peakCount) < (static_cast<T>(this->hold) *  )
-			if (
-				static_cast<T>(this->peakCount) <= (static_cast<T>(this->hold)* static_cast<T>(sampleRate))
-				)
+			double envelopeTime = static_cast<T>(this->peakCount) * (1.0 / this->sampleRate);
+			bool isHold = (envelopeTime <= this->hold);
+			bool isRelease = false;
+			if (envelopeTime <= this->hold) {
+				isRelease = false;
+			}
+			else if ((envelopeTime - this->hold) <= (this->release * 20.0)) {
+				isRelease = true;
+			}
+			else {
+				isRelease = false;
+			}
+
+			if (isHold)
 			{
 				this->outputBuffer = this->peakBuffer;
-			} else if (
-				static_cast<T>(
-					this->peakCount - 
-					(static_cast<T>(this->hold)* static_cast<T>(sampleRate))) <= static_cast<T>(this->sampleRate * 10)
-				)
+			} else if (isRelease)
 			{
 				this->outputBuffer = this->peakBuff *
 					pow(M_E, -(static_cast<T>(this->peakCount) / this->sampleRate) / this->releaseTime);
@@ -120,8 +132,28 @@ namespace StGate {
 	inline T AutoGateEG<T>::processing(T inL, T inR)
 	{
 		T input = absOr(inR, inL);
-		T lpfout = this->lpf->prosessing(input);
+		T envelope = this->peakHold(lpfout);
+		T normalizedEnvelope = envelope / this->threshold;
+		T gateGain = thesholdCut(normalizedEnvelope);
+		T gate = this->lpf->processing(gate);
 		return 0;
+	}
+
+	template<typename T>
+	inline T AutoGateEG<T>::thesholdCut(T input) {
+		T normalizedEnvelope = T / this->setThreshold;
+		if (normalizedEnvelope < 1.0) {
+			// minimum gain range scaling
+			T maxRange = 1.0 - this->range;
+			T rangedEnvelope = normalizedEnvelope * maxRange + this->range;
+			return rangedEnvelope;
+		}
+		else {
+			// expander
+			T overGain = normalizedEnvelope - 1.0;
+			overGain = overGain * (this->ratio - 1.0)/*0.0 - 29*/;
+			return overGain + 1.0;
+		}
 	}
 
 }
